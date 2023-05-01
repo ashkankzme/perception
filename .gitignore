@@ -1,0 +1,11 @@
+*~
+*__pycache__*
+*.p
+/venv/
+/perceptron/
+/.idea/
+lit/*
+*/.ipynb_checkpoints/*
+src/__pycache__/
+.token
+.DS_Store
