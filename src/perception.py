@@ -40,15 +40,38 @@ if __name__ == '__main__':
     # Print out the data
     # print(data[:5])
     mTurkData = readCSVFiles('../data/mturk_data/')
+    print("Number of HITs completed: ", len(mTurkData))
     groupedMTurkData = groupByWorkerId(mTurkData)
 
-    # select a random sample of 50 keys from groupedMTurkData, and print the length of the value list for each key
-    for key in random.sample(list(groupedMTurkData.keys()), 50):
-        print(len(groupedMTurkData[key]))
 
-    print("---------------")
+
+    # select a random sample of 50 keys from groupedMTurkData, and print the length of the value list for each key
+    # print("Random sample of 50 workers:")
+    # for key in random.sample(list(groupedMTurkData.keys()), 50):
+    #     example = random.sample(groupedMTurkData[key], 1)[0]
+    #     # print(example['Input.sentence'], len(groupedMTurkData[key]))
+    #     print(example['Input.sentence'])
+    #
+    # print("---------------")
 
     # sort the keys by the length of the value list, and print the first 50 keys descending
-    for key in sorted(groupedMTurkData, key=lambda k: len(groupedMTurkData[k]), reverse=True)[:50]:
-        print(len(groupedMTurkData[key]))
+    # print("Top 50 workers by number of HITs completed:")
+    # for key in sorted(groupedMTurkData, key=lambda k: len(groupedMTurkData[k]), reverse=True)[:50]:
+    #     print(len(groupedMTurkData[key]))
 
+    # print all rows in mTurkData where the value for 'Input.reason' is longer than 30 characters and 'LifetimeApprovalRate' is over 90%
+    # all_column_names = list(set([key for row in mTurkData for key in row.keys()]))
+    # for idx, row in enumerate(mTurkData):
+    #     for column in all_column_names:
+    #         if column not in row:
+    #             mTurkData[idx][column] = ''
+
+    # print(len([row for row in mTurkData if len(row['Input.reason']) > 20]))
+    # print(len(set([row['Input.reason'].lower() for row in mTurkData if len(row['Input.reason']) > 20])))
+    # for row in mTurkData:
+    #     if len(row['Input.reason']) > 10 and len(row['LifetimeApprovalRate']) > 0 and float(row['LifetimeApprovalRate'].split('%')[0]) >= 90:
+    #         print('WorkerId: {}'.format(row['WorkerId']))
+    #         print('sentence: {}'.format(row['Input.sentence']))
+    #         print('reason: {}'.format(row['Input.reason']))
+    #         print('-----------------')
+    # print(sorted(all_column_names))
