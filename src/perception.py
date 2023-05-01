@@ -129,3 +129,7 @@ if __name__ == '__main__':
     groupedMTurkData = groupByWorkerId(mTurkData)
     refinedGroupedMTurkData = filterColumns(groupedMTurkData)
     print("A random sample of 10 HITS completed by a random worker: ", random.sample(refinedGroupedMTurkData[random.choice(list(refinedGroupedMTurkData.keys()))], 10))
+
+    # print all rows in mTurkData where the value for 'Input.reason' is longer than 30 characters and 'LifetimeApprovalRate' is over 90%
+    all_column_names = list(set([key for row in mTurkData for key in row.keys()]))
+    print(sorted(all_column_names))
