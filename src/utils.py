@@ -46,7 +46,10 @@ class MRFDatasetUtility(object):
             'Answer.10mo2c',
             'Answer.10react.no',
             'Answer.10react.yes',
-            'Answer.2imply.no',
+            'Answer.mo2a', # q4 (first under writer intent)
+            'Answer.mo2b',
+            'Answer.mo2c',
+            'Answer.2imply.no', # q4 (first under writer intent)
             'Answer.2imply.yes',
             'Answer.3imply.no',
             'Answer.3imply.yes',
@@ -87,10 +90,7 @@ class MRFDatasetUtility(object):
             'Answer.eth5.Asian/Pacific Islander',
             'Answer.eth6.Other',
             'Answer.gender',
-            'Answer.mo2a',
-            'Answer.mo2b',
-            'Answer.mo2c',
-            'Answer.likert.agree',
+            'Answer.likert.agree', # this is likelyhood to share
             'Answer.likert.disagree',
             'Answer.likert.neutral',
             'Answer.likert.strong_agree',
@@ -128,7 +128,26 @@ class MRFDatasetUtility(object):
             for hit in groupedMTurkData[workerId]:
                 filteredHit = {}
                 for key in hit:
-                    if key in specialColumnNames:
+                    if key in specialColumnNames and key not in ['Answer.mo2a', 'Answer.mo2b', 'Answer.mo2c']:
                         filteredHit[key] = hit[key]
+                    elif key in specialColumnNames:
+                        newKey = key.replace('Answer.', 'Answer.2')
+                        filteredHit[newKey] = hit[key]
                 filteredGroupedMTurkData[workerId].append(filteredHit)
         return filteredGroupedMTurkData
+
+    @staticmethod
+    def getWorkerDemographics(self, workerHITS):
+        demographics = {} # age, gender, education, race, approval rate
+        for hit in workerHITS:
+            if hit['HITId'] == '3S1Y0WZ8H4Z4QVYXJ1Y0YXH9X9YF6P':
+                return hit
+
+
+    @staticmethod
+    def transformData(filteredGroupedMTurkData):
+        # first create workerObjects
+        humanWorkers = []
+        for workerId in filteredGroupedMTurkData:
+            getWorkerDemographics
+
