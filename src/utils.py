@@ -1,5 +1,6 @@
 import csv
 import os
+from humanWorker import HumanWorker
 
 
 class MRFDatasetUtility(object):
@@ -40,7 +41,7 @@ class MRFDatasetUtility(object):
         filteredGroupedMTurkData = {}
         specialColumnNames = [
             'WorkerId',
-            'Answer.10mo2a',
+            'Answer.10mo2a', # reader intent
             'Answer.10mo2ab',
             'Answer.10mo2b',
             'Answer.10mo2c',
@@ -121,11 +122,16 @@ class MRFDatasetUtility(object):
             'Answer.real.mis',
             'Answer.real.realnews',
             'HITId',
-            'LifetimeApprovalRate'
+            'LifetimeApprovalRate',
+            'SubmitTime',
+            'InputLabel'
         ]
         for workerId in groupedMTurkData:
             filteredGroupedMTurkData[workerId] = []
             for hit in groupedMTurkData[workerId]:
+                if hit['AssignmentStatus'] != 'Approved':
+                    continue
+
                 filteredHit = {}
                 for key in hit:
                     if key in specialColumnNames and key not in ['Answer.mo2a', 'Answer.mo2b', 'Answer.mo2c']:
@@ -134,20 +140,145 @@ class MRFDatasetUtility(object):
                         newKey = key.replace('Answer.', 'Answer.2')
                         filteredHit[newKey] = hit[key]
                 filteredGroupedMTurkData[workerId].append(filteredHit)
+
+            filteredGroupedMTurkData[workerId] = sorted(filteredGroupedMTurkData[workerId], key=lambda k: k['SubmitTime'])
+
         return filteredGroupedMTurkData
 
-    @staticmethod
-    def getWorkerDemographics(self, workerHITS):
-        demographics = {} # age, gender, education, race, approval rate
-        for hit in workerHITS:
-            if hit['HITId'] == '3S1Y0WZ8H4Z4QVYXJ1Y0YXH9X9YF6P':
-                return hit
-
 
     @staticmethod
-    def transformData(filteredGroupedMTurkData):
-        # first create workerObjects
-        humanWorkers = []
-        for workerId in filteredGroupedMTurkData:
-            getWorkerDemographics
+    def getMostRepeatedAnswer(columnId, hits):
+        answers = {}
+        for hit in hits:
+            if hit[columnId] not in answers:
+                answers[hit[columnId]] = 0
+            answers[hit[columnId]] += 1
+        return max(answers, key=answers.get)
 
+
+    @staticmethod
+    def transformMTurkData(mTurkData, refinedGroupedMTurkData):
+        # get text columns most repeated values
+        textColumns = [
+            'Answer.2mo2a',  # q4 (first under writer intent)
+            'Answer.2mo2b',
+            'Answer.2mo2c',
+            'Answer.3mo2a',
+            'Answer.3mo2b',
+            'Answer.3mo2c',
+            'Answer.4mo2a',
+            'Answer.4mo2b',
+            'Answer.4mo2c',
+            'Answer.5mo2a',
+            'Answer.5mo2b',
+            'Answer.5mo2c',
+            'Answer.6mo2a',
+            'Answer.6mo2b',
+            'Answer.6mo2c',
+            'Answer.7mo2a',
+            'Answer.7mo2b',
+            'Answer.7mo2c',
+            'Answer.8mo2a',
+            'Answer.8mo2b',
+            'Answer.8mo2c',
+        ]
+
+        mostRepeatedAnswers = {}
+        for column in textColumns:
+            columnMostRepeatedAnswer = MRFDatasetUtility.getMostRepeatedAnswer(column, mTurkData)
+            mostRepeatedAnswers[column] = columnMostRepeatedAnswer
+
+        # iterate over groupedData, for each row, remove all columns that equal the corresponding value in mostRepeatedAnswers
+        workers = []
+        for workerId in refinedGroupedMTurkData:
+            for hit in refinedGroupedMTurkData[workerId]:
+                hit['intent'] = []
+                if hit['Answer.10react.yes']:
+                    if len(hit['Answer.10mo2a']) > 0 and hit['Answer.10mo2a'] != mostRepeatedAnswers[hit['Answer.10mo2a']]:
+                        hit['intent'].append(hit['Answer.10mo2a'])
+
+                    if len(hit['Answer.10mo2ab']) > 0 and hit['Answer.10mo2ab'] != mostRepeatedAnswers[hit['Answer.10mo2ab']]:
+                        hit['intent'].append(hit['Answer.10mo2ab'])
+
+                    if len(hit['Answer.10mo2b']) > 0 and hit['Answer.10mo2b'] != mostRepeatedAnswers[hit['Answer.10mo2b']]:
+                        hit['intent'].append(hit['Answer.10mo2b'])
+
+                    if len(hit['Answer.10mo2c']) > 0 and hit['Answer.10mo2c'] != mostRepeatedAnswers[hit['Answer.10mo2c']]:
+                        hit['intent'].append(hit['Answer.10mo2c'])
+
+                hit['reaction'] = []
+                for column in textColumns:
+                    if len(hit[column]) > 0 and hit[column] == mostRepeatedAnswers[column]:
+                        del hit[column]
+                        additionalColumns = [_c for _c in hit.keys() if _c[:8] == column[:8] and _c != column] # removing imply columns
+                        for additionalColumn in additionalColumns:
+                            del hit[additionalColumn]
+
+                    elif hit[column[:8] + 'imply.yes']: # todo test if actually works
+                        hit['reaction'].append(hit[column])
+
+            workerDemographics = {}
+            workerDemographics['age'] = list(set([hit['Answer.age'] for hit in refinedGroupedMTurkData[workerId]]))
+            workerDemographics['gender'] = list(set([hit['Answer.gender'] for hit in refinedGroupedMTurkData[workerId]]))
+            workerDemographics['education'] = list(set([hit['Answer.ed'] for hit in refinedGroupedMTurkData[workerId]]))
+            workerDemographics['race'] = {
+                'white': list(set([hit['Answer.eth1.White'] for hit in refinedGroupedMTurkData[workerId]])),
+                'latino': list(set([hit['Answer.eth2.Hispanic/Latino'] for hit in refinedGroupedMTurkData[workerId]])),
+                'black': list(set([hit['Answer.eth3.Black/African-American'] for hit in refinedGroupedMTurkData[workerId]])),
+                'american': list(set([hit['Answer.eth4.Native American'] for hit in refinedGroupedMTurkData[workerId]])),
+                'asian': list(set([hit['Answer.eth5.Asian/Pacific Islander'] for hit in refinedGroupedMTurkData[workerId]])),
+                'other': list(set([hit['Answer.eth6.Other'] for hit in refinedGroupedMTurkData[workerId]]))
+            }
+
+            workerMediaConsumptionRegimen = {
+                # 'Answer.news1.Twitter',
+                'twitter': list(set([hit['Answer.news1.Twitter'] for hit in refinedGroupedMTurkData[workerId]])),
+                # 'Answer.news10.Daily Mail',
+                "dailyMail": list(set([hit['Answer.news10.Daily Mail'] for hit in refinedGroupedMTurkData[workerId]])),
+                # 'Answer.news11.Washington Post',
+                "washingtonPost": list(set([hit['Answer.news11.Washington Post'] for hit in refinedGroupedMTurkData[workerId]])),
+                # 'Answer.news12.Reuters',
+                "reuters": list(set([hit['Answer.news12.Reuters'] for hit in refinedGroupedMTurkData[workerId]])),
+                # 'Answer.news13.Breitbart News Network',
+                "breitbart": list(set([hit['Answer.news13.Breitbart News Network'] for hit in refinedGroupedMTurkData[workerId]])),
+                # 'Answer.news14.NPR',
+                "npr": list(set([hit['Answer.news14.NPR'] for hit in refinedGroupedMTurkData[workerId]])),
+                # 'Answer.news15.BBC',
+                "bbc": list(set([hit['Answer.news15.BBC'] for hit in refinedGroupedMTurkData[workerId]])),
+                # 'Answer.news16.GUARDIAN',
+                "guardian": list(set([hit['Answer.news16.GUARDIAN'] for hit in refinedGroupedMTurkData[workerId]])),
+                # 'Answer.news17.Facebook',
+                "facebook": list(set([hit['Answer.news17.Facebook'] for hit in refinedGroupedMTurkData[workerId]])),
+                # 'Answer.news17.Other',
+                "other": list(set([hit['Answer.news17.Other'] for hit in refinedGroupedMTurkData[workerId]])),
+                # 'Answer.news18.Reddit',
+                "reddit": list(set([hit['Answer.news18.Reddit'] for hit in refinedGroupedMTurkData[workerId]])),
+                # 'Answer.news19.4chan',
+                "4chan": list(set([hit['Answer.news19.4chan'] for hit in refinedGroupedMTurkData[workerId]])),
+                # 'Answer.news2.Yahoo-ABC News Network',
+                "yahoo": list(set([hit['Answer.news2.Yahoo-ABC News Network'] for hit in refinedGroupedMTurkData[workerId]])),
+                # 'Answer.news20.Vox',
+                "vox": list(set([hit['Answer.news20.Vox'] for hit in refinedGroupedMTurkData[workerId]])),
+                # 'Answer.news21.youtube',
+                "youtube": list(set([hit['Answer.news21.youtube'] for hit in refinedGroupedMTurkData[workerId]])),
+                # 'Answer.news3.CNN',
+                "cnn": list(set([hit['Answer.news3.CNN'] for hit in refinedGroupedMTurkData[workerId]])),
+                # 'Answer.news4.Huffington Post',
+                "huffingtonPost": list(set([hit['Answer.news4.Huffington Post'] for hit in refinedGroupedMTurkData[workerId]])),
+                # 'Answer.news5.CBS News',
+                "cbs": list(set([hit['Answer.news5.CBS News'] for hit in refinedGroupedMTurkData[workerId]])),
+                # 'Answer.news6.USAToday',
+                "usaToday": list(set([hit['Answer.news6.USAToday'] for hit in refinedGroupedMTurkData[workerId]])),
+                # 'Answer.news7.BuzzFeed',
+                "buzzFeed": list(set([hit['Answer.news7.BuzzFeed'] for hit in refinedGroupedMTurkData[workerId]])),
+                # 'Answer.news8.New York Times',
+                "newYorkTimes": list(set([hit['Answer.news8.New York Times'] for hit in refinedGroupedMTurkData[workerId]])),
+                # 'Answer.news9.Fox News Digital Network',
+                "fox": list(set([hit['Answer.news9.Fox News Digital Network'] for hit in refinedGroupedMTurkData[workerId]])),
+            }
+
+            workers.append(
+                HumanWorker(workerId, workerDemographics, workerMediaConsumptionRegimen, refinedGroupedMTurkData[workerId][-1]['LifetimeApprovalRate'])
+            )
+
+            workers[-1].addFrames(refinedGroupedMTurkData[workerId]) # todo fix formatting
