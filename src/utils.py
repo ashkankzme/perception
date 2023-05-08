@@ -131,8 +131,8 @@ class MRFDatasetUtility(object):
         for workerId in groupedMTurkData:
             filteredGroupedMTurkData[workerId] = []
             for hit in groupedMTurkData[workerId]:
-                if hit['AssignmentStatus'] != 'Approved':
-                    continue
+                # if hit['AssignmentStatus'] != 'Approved': # TODO double check what the criteria for an approved HIT is
+                #     continue
 
                 filteredHit = {}
                 for key in hit:
@@ -299,14 +299,30 @@ class MRFDatasetUtility(object):
                 "fox": list(set([hit['Answer.news9.Fox News Digital Network'] for hit in refinedGroupedMTurkData[workerId]])),
             }
 
-            workers.append(
-                HumanWorker(workerId, workerDemographics, workerMediaConsumptionRegimen, refinedGroupedMTurkData[workerId][-1]['LifetimeApprovalRate'])
-            )
-
-            workers[-1].addFrames(refinedGroupedMTurkData[workerId]) # todo fix formatting
+            if len(refinedGroupedMTurkData[workerId]) > 0:
+                workers.append(
+                    HumanWorker(workerId, workerDemographics, workerMediaConsumptionRegimen, refinedGroupedMTurkData[workerId][-1]['LifetimeApprovalRate'])
+                )
+                workers[-1].setFrames(refinedGroupedMTurkData[workerId]) # todo fix formatting
+            #
+            # else:
+            #     print('poopity poop poop {}'.format(workerId))
 
         return workers
-
+    
+    
+    @staticmethod
+    def loadAndCleanMRFDataset(inputPath, outputFilename):
+        mTurkData = MRFDatasetUtility.readCSVFiles(inputPath)
+        print("Number of HITs completed: ", len(mTurkData))
+        groupedMTurkData = MRFDatasetUtility.groupByWorkerId(mTurkData)
+        print(len(groupedMTurkData['A3UJX60MALFMW0']))
+        refinedGroupedMTurkData = MRFDatasetUtility.filterColumns(groupedMTurkData)
+        print(len(refinedGroupedMTurkData['A3UJX60MALFMW0']))
+        workers = MRFDatasetUtility.transformMTurkData(refinedGroupedMTurkData)
+        # persisting processed data
+        saveObjectsToJsonFile(workers, outputFilename) # todo test serialization/deserialization
+        return workers
 
 def saveObjectsToJsonFile(objects, fileName):
     with open(fileName, 'w') as outfile:

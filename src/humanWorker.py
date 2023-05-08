@@ -6,11 +6,8 @@ class HumanWorker(Worker):
 
         def __init__(self, id, demographics, mediaConsumptionRegimen, approvalRating):
             super().__init__(id)
-            self.ageBracket = ageBracket
-            self.education = education
+            self.demographics = demographics
             self.mediaConsumptionRegimen = mediaConsumptionRegimen
-            self.ethnicity = ethnicity
-            self.gender = gender
             self.approvalRating = approvalRating
             self.annotatedFrames = []
 
@@ -20,7 +17,7 @@ class HumanWorker(Worker):
 
 
         def setFrames(self, frames): # todo parse the data first and then create Frame objects out of them
-            self.annotatedFrames.extend(frames)
+            self.annotatedFrames = frames
 
         @staticmethod
         def _decode(humanWorkerDict):
