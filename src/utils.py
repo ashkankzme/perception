@@ -48,11 +48,11 @@ class MRFDatasetUtility(object):
             'Answer.10mo2c',
             'Answer.10react.no',
             'Answer.10react.yes',
+            'Answer.2imply.no',  # q4 (first under writer intent)
+            'Answer.2imply.yes',
             'Answer.mo2a', # q4 (first under writer intent)
             'Answer.mo2b',
             'Answer.mo2c',
-            'Answer.2imply.no', # q4 (first under writer intent)
-            'Answer.2imply.yes',
             'Answer.3imply.no',
             'Answer.3imply.yes',
             'Answer.3mo2a',
@@ -143,7 +143,7 @@ class MRFDatasetUtility(object):
                         filteredHit[newKey] = hit[key]
 
                 for key in specialColumnNames:
-                    if key not in filteredHit:
+                    if key not in hit:
                         if key in ['Answer.mo2a', 'Answer.mo2b', 'Answer.mo2c']:
                             newKey = key.replace('Answer.', 'Answer.2')
                             filteredHit[newKey] = ''
@@ -232,11 +232,11 @@ class MRFDatasetUtility(object):
 
                     if len(hit[column]) > 0 and hit[column] == mostRepeatedAnswers[column]:
                         del hit[column]
-                        additionalColumns = [_c for _c in hit.keys() if _c[:8] == column[:8] and _c != column] # removing imply columns
-                        for additionalColumn in additionalColumns:
-                            del hit[additionalColumn]
+                        # additionalColumns = [_c for _c in hit.keys() if _c[:8] == column[:8] and _c != column] # removing imply columns
+                        # for additionalColumn in additionalColumns:
+                        #     del hit[additionalColumn]
 
-                    elif hit[column[:8] + 'imply.yes']: # todo test if actually works
+                    elif hit[column[:8] + 'imply.yes'].lower() == 'true': # todo test if actually works
                         hit['reaction'].append(hit[column])
 
             workerDemographics = {}
@@ -316,12 +316,10 @@ class MRFDatasetUtility(object):
         mTurkData = MRFDatasetUtility.readCSVFiles(inputPath)
         print("Number of HITs completed: ", len(mTurkData))
         groupedMTurkData = MRFDatasetUtility.groupByWorkerId(mTurkData)
-        print(len(groupedMTurkData['A3UJX60MALFMW0']))
         refinedGroupedMTurkData = MRFDatasetUtility.filterColumns(groupedMTurkData)
-        print(len(refinedGroupedMTurkData['A3UJX60MALFMW0']))
         workers = MRFDatasetUtility.transformMTurkData(refinedGroupedMTurkData)
         # persisting processed data
-        saveObjectsToJsonFile(workers, outputFilename) # todo test serialization/deserialization
+        # saveObjectsToJsonFile(workers, outputFilename) # todo test serialization/deserialization
         return workers
 
 def saveObjectsToJsonFile(objects, fileName):
