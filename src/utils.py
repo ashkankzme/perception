@@ -319,7 +319,7 @@ class MRFDatasetUtility(object):
         refinedGroupedMTurkData = MRFDatasetUtility.filterColumns(groupedMTurkData)
         workers = MRFDatasetUtility.transformMTurkData(refinedGroupedMTurkData)
         # persisting processed data
-        # saveObjectsToJsonFile(workers, outputFilename) # todo test serialization/deserialization
+        saveObjectsToJsonFile(workers, outputFilename) # todo test serialization/deserialization
         return workers
 
 def saveObjectsToJsonFile(objects, fileName):
@@ -329,6 +329,7 @@ def saveObjectsToJsonFile(objects, fileName):
 
 def loadObjectsFromJsonFile(fileName): # todo does this work?
     with open(fileName) as json_file:
-        data = json.load(json_file, object_hook=HumanWorker._decode)
+        data = json.load(json_file)
+        # data = json.load(json_file, object_hook=HumanWorker._decode)
 
     return data
