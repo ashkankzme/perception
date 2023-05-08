@@ -8,7 +8,7 @@ if __name__ == '__main__':
     print("Number of HITs completed: ", len(mTurkData))
     groupedMTurkData = mrfdu.groupByWorkerId(mTurkData)
     refinedGroupedMTurkData = mrfdu.filterColumns(groupedMTurkData)
-    workers = mrfdu.transformMTurkData(mTurkData, refinedGroupedMTurkData)
+    workers = mrfdu.transformMTurkData(refinedGroupedMTurkData)
 
     # persisting processed data
     saveObjectsToJsonFile(workers, '../data/mrf_turk_processed.json') # todo test serialization/deserialization

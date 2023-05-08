@@ -141,6 +141,15 @@ class MRFDatasetUtility(object):
                     elif key in specialColumnNames:
                         newKey = key.replace('Answer.', 'Answer.2')
                         filteredHit[newKey] = hit[key]
+
+                for key in specialColumnNames:
+                    if key not in filteredHit:
+                        if key in ['Answer.mo2a', 'Answer.mo2b', 'Answer.mo2c']:
+                            newKey = key.replace('Answer.', 'Answer.2')
+                            filteredHit[newKey] = ''
+                        else:
+                            filteredHit[key] = ''
+
                 filteredGroupedMTurkData[workerId].append(filteredHit)
 
             filteredGroupedMTurkData[workerId] = sorted(filteredGroupedMTurkData[workerId], key=lambda k: k['SubmitTime'])
@@ -159,9 +168,16 @@ class MRFDatasetUtility(object):
 
 
     @staticmethod
-    def transformMTurkData(mTurkData, refinedGroupedMTurkData):
+    def transformMTurkData(refinedGroupedMTurkData):
         # get text columns most repeated values
-        textColumns = [
+        intentTexts = [
+            'Answer.10mo2a',
+            'Answer.10mo2ab',
+            'Answer.10mo2b',
+            'Answer.10mo2c',
+            ]
+
+        reactionTexts = [
             'Answer.2mo2a',  # q4 (first under writer intent)
             'Answer.2mo2b',
             'Answer.2mo2c',
@@ -186,8 +202,9 @@ class MRFDatasetUtility(object):
         ]
 
         mostRepeatedAnswers = {}
-        for column in textColumns:
-            columnMostRepeatedAnswer = MRFDatasetUtility.getMostRepeatedAnswer(column, mTurkData)
+        refinedHits = [hit for workerId in refinedGroupedMTurkData for hit in refinedGroupedMTurkData[workerId]]
+        for column in intentTexts + reactionTexts:
+            columnMostRepeatedAnswer = MRFDatasetUtility.getMostRepeatedAnswer(column, refinedHits)
             mostRepeatedAnswers[column] = columnMostRepeatedAnswer
 
         # iterate over groupedData, for each row, remove all columns that equal the corresponding value in mostRepeatedAnswers
@@ -196,20 +213,23 @@ class MRFDatasetUtility(object):
             for hit in refinedGroupedMTurkData[workerId]:
                 hit['intent'] = []
                 if hit['Answer.10react.yes']:
-                    if len(hit['Answer.10mo2a']) > 0 and hit['Answer.10mo2a'] != mostRepeatedAnswers[hit['Answer.10mo2a']]:
+                    if len(hit['Answer.10mo2a']) > 0 and hit['Answer.10mo2a'] != mostRepeatedAnswers['Answer.10mo2a']:
                         hit['intent'].append(hit['Answer.10mo2a'])
 
-                    if len(hit['Answer.10mo2ab']) > 0 and hit['Answer.10mo2ab'] != mostRepeatedAnswers[hit['Answer.10mo2ab']]:
+                    if len(hit['Answer.10mo2ab']) > 0 and hit['Answer.10mo2ab'] != mostRepeatedAnswers['Answer.10mo2ab']:
                         hit['intent'].append(hit['Answer.10mo2ab'])
 
-                    if len(hit['Answer.10mo2b']) > 0 and hit['Answer.10mo2b'] != mostRepeatedAnswers[hit['Answer.10mo2b']]:
+                    if len(hit['Answer.10mo2b']) > 0 and hit['Answer.10mo2b'] != mostRepeatedAnswers['Answer.10mo2b']:
                         hit['intent'].append(hit['Answer.10mo2b'])
 
-                    if len(hit['Answer.10mo2c']) > 0 and hit['Answer.10mo2c'] != mostRepeatedAnswers[hit['Answer.10mo2c']]:
+                    if len(hit['Answer.10mo2c']) > 0 and hit['Answer.10mo2c'] != mostRepeatedAnswers['Answer.10mo2c']:
                         hit['intent'].append(hit['Answer.10mo2c'])
 
                 hit['reaction'] = []
-                for column in textColumns:
+                for column in reactionTexts:
+                    if column not in hit:
+                        continue
+
                     if len(hit[column]) > 0 and hit[column] == mostRepeatedAnswers[column]:
                         del hit[column]
                         additionalColumns = [_c for _c in hit.keys() if _c[:8] == column[:8] and _c != column] # removing imply columns

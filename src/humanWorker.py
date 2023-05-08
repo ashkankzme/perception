@@ -1,10 +1,10 @@
-from .worker import Worker
+from worker import Worker
 from collections import namedtuple
 
 
 class HumanWorker(Worker):
 
-        def __init__(self, id, demographics, mediaConsumptionRegime, approvalRating):
+        def __init__(self, id, demographics, mediaConsumptionRegimen, approvalRating):
             super().__init__(id)
             self.ageBracket = ageBracket
             self.education = education
