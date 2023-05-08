@@ -1,4 +1,7 @@
 from .worker import Worker
+from collections import namedtuple
+
+
 class HumanWorker(Worker):
 
         def __init__(self, id, demographics, mediaConsumptionRegime, approvalRating):
@@ -16,5 +19,9 @@ class HumanWorker(Worker):
             self.annotatedFrames.append(frame)
 
 
-        def addFrames(self, frames):
+        def setFrames(self, frames): # todo parse the data first and then create Frame objects out of them
             self.annotatedFrames.extend(frames)
+
+        @staticmethod
+        def _decode(humanWorkerDict):
+            return namedtuple('X', humanWorkerDict.keys())(*humanWorkerDict.values())

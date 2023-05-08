@@ -1,4 +1,5 @@
 import csv
+import json
 import os
 from humanWorker import HumanWorker
 
@@ -124,7 +125,8 @@ class MRFDatasetUtility(object):
             'HITId',
             'LifetimeApprovalRate',
             'SubmitTime',
-            'InputLabel'
+            'Input.label',
+            'Input.sentence'
         ]
         for workerId in groupedMTurkData:
             filteredGroupedMTurkData[workerId] = []
@@ -282,3 +284,17 @@ class MRFDatasetUtility(object):
             )
 
             workers[-1].addFrames(refinedGroupedMTurkData[workerId]) # todo fix formatting
+
+        return workers
+
+
+def saveObjectsToJsonFile(objects, fileName):
+    with open(fileName, 'w') as outfile:
+        json.dump([ob.__dict__ for ob in objects], outfile, indent=4)
+
+
+def loadObjectsFromJsonFile(fileName): # todo does this work?
+    with open(fileName) as json_file:
+        data = json.load(json_file, object_hook=HumanWorker._decode)
+
+    return data
