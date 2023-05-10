@@ -1,5 +1,5 @@
 import random
-from utils import MRFDatasetUtility as mrfdu
+from src.mrf_dataset_utility import MRFDatasetUtility as mrfdu
 from utils import saveObjectsToJsonFile, loadObjectsFromJsonFile
 
 
