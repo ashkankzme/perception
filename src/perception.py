@@ -15,3 +15,5 @@ if __name__ == '__main__':
             f'Race: {worker["race"]}, #Annotations: {len(worker["annotatedFrames"])}'
         )
         print('------------------')
+
+    print(len([a for a in workers if len(a['annotatedFrames']) > 100]))

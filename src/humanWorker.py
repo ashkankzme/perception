@@ -9,15 +9,18 @@ class HumanWorker(Worker):
             # self.demographics = demographics
 
             self.age = HumanWorker.removeDefaultValues(demographics['age'], '0')
-            self.age = self.age[0] if len(self.age) else None
+            self.age = self.age[0] if len(self.age) and len(self.age[0]) else None
 
-            self.gender = HumanWorker.removeDefaultValues(demographics['gender'], '0') if len(demographics['gender']) > 1 else demographics['gender'][0] if len(demographics['gender'][0]) else None
+            self.gender = HumanWorker.removeDefaultValues(demographics['gender'], '0')
+            self.gender = self.gender[0] if len(self.gender) and len(self.gender[0]) else None
 
-            self.education = HumanWorker.removeDefaultValues(demographics['education'], '0') if len(demographics['education']) > 1 else demographics['education'][0] if len(demographics['education'][0]) else None
+            self.education = HumanWorker.removeDefaultValues(demographics['education'], '0')
+            self.education = self.education[0] if len(self.education) and len(self.education[0]) else None
 
             self.race = demographics['race']
+            self.race = [racialGroup for racialGroup in self.race if 'true' in self.race[racialGroup]]
 
-            self.mediaConsumptionRegimen = mediaConsumptionRegimen
+            self.mediaConsumptionRegimen = [media for media in mediaConsumptionRegimen if 'true' in mediaConsumptionRegimen[media]]
             self.approvalRating = approvalRating
             self.annotatedFrames = []
 

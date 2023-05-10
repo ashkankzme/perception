@@ -211,21 +211,21 @@ class MRFDatasetUtility(object):
         workers = []
         for workerId in refinedGroupedMTurkData:
             for hit in refinedGroupedMTurkData[workerId]:
-                hit['intent'] = []
+                hit['reaction'] = []
                 if hit['Answer.10react.yes']:
                     if len(hit['Answer.10mo2a']) > 0 and hit['Answer.10mo2a'] != mostRepeatedAnswers['Answer.10mo2a']:
-                        hit['intent'].append(hit['Answer.10mo2a'])
+                        hit['reaction'].append(hit['Answer.10mo2a'])
 
                     if len(hit['Answer.10mo2ab']) > 0 and hit['Answer.10mo2ab'] != mostRepeatedAnswers['Answer.10mo2ab']:
-                        hit['intent'].append(hit['Answer.10mo2ab'])
+                        hit['reaction'].append(hit['Answer.10mo2ab'])
 
                     if len(hit['Answer.10mo2b']) > 0 and hit['Answer.10mo2b'] != mostRepeatedAnswers['Answer.10mo2b']:
-                        hit['intent'].append(hit['Answer.10mo2b'])
+                        hit['reaction'].append(hit['Answer.10mo2b'])
 
                     if len(hit['Answer.10mo2c']) > 0 and hit['Answer.10mo2c'] != mostRepeatedAnswers['Answer.10mo2c']:
-                        hit['intent'].append(hit['Answer.10mo2c'])
+                        hit['reaction'].append(hit['Answer.10mo2c'])
 
-                hit['reaction'] = []
+                hit['intent'] = []
                 for column in reactionTexts:
                     if column not in hit:
                         continue
@@ -237,7 +237,7 @@ class MRFDatasetUtility(object):
                         #     del hit[additionalColumn]
 
                     elif hit[column[:8] + 'imply.yes'].lower() == 'true': # todo test if actually works
-                        hit['reaction'].append(hit[column])
+                        hit['intent'].append(hit[column])
 
             workerDemographics = {}
             workerDemographics['age'] = list(set([hit['Answer.age'] for hit in refinedGroupedMTurkData[workerId]]))
