@@ -19,8 +19,11 @@ class HumanWorker(Worker):
 
             self.race = demographics['race']
             self.race = [racialGroup for racialGroup in self.race if 'true' in self.race[racialGroup]]
+            self.race = self.race if len(self.race) > 0 else None
 
             self.mediaConsumptionRegimen = [media for media in mediaConsumptionRegimen if 'true' in mediaConsumptionRegimen[media]]
+            self.mediaConsumptionRegimen = self.mediaConsumptionRegimen if len(self.mediaConsumptionRegimen) > 0 else None
+
             self.approvalRating = approvalRating
             self.annotatedFrames = []
 
