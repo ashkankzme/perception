@@ -15,6 +15,7 @@ class UntitledModel(nn.Module):
         assert config.block_size is not None
         self.config = config
 
+        # gptconf = GPTConfig(**model_args) # todo fix this
         self.decisionTransformer = GPT(gpt2Config) # todo tune GPT config for my task, right now using default GPT2 config
 
         self.textEncoder = SentenceTransformer(defaultConfig.SBERT_MODEL_NAME) # todo should we load model here?
