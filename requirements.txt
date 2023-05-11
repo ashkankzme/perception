@@ -4,3 +4,4 @@ transformers
 tiktoken
 wandb
 tqdm
+sentence-transformers
