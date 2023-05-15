@@ -305,11 +305,13 @@ class MRFDatasetUtility(object):
                     HumanWorker(workerId, workerDemographics, workerMediaConsumptionRegimen, refinedGroupedMTurkData[workerId][-1]['LifetimeApprovalRate'])
                 )
                 workers[-1].setFrames(refinedGroupedMTurkData[workerId]) # todo fix formatting
-            #
-            # else:
-            #     print('poopity poop poop {}'.format(workerId))
 
         return workers
+
+
+    @staticmethod
+    def generateTrajectorySequencesFromMRFDataset(workers, outputFilename):
+        pass # todo
 
 
     @staticmethod
