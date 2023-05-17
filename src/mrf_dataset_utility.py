@@ -242,6 +242,9 @@ class MRFDatasetUtility(object):
                     elif hit[column[:8] + 'imply.yes'].lower() == 'true': # todo test if actually works
                         hit['intent'].append(hit[column])
 
+                hit['perceivedLabel'] = 'real news' if hit['Answer.real.realnews'] == 'true' else 'misinformation' if hit['Answer.real.mis'] == 'true' else None
+                hit['actualLabel'] = hit['Input.label']
+
             workerDemographics = {}
             workerDemographics['age'] = list(set([hit['Answer.age'] for hit in refinedGroupedMTurkData[workerId]]))
             workerDemographics['gender'] = list(set([hit['Answer.gender'] for hit in refinedGroupedMTurkData[workerId]]))
@@ -328,18 +331,29 @@ class MRFDatasetUtility(object):
                 sampledIndices = random.sample(range(len(workers[workerID]['frames'])), K+1)
                 sampledIndices = sorted(sampledIndices)
                 sampledFrames = [workers[workerID]['frames'][i] for i in sampledIndices[:-1]]
+
+                sampledFrames = [
+                    'Headline: ' + frame['headline'] + '\n' +
+                    f'Reader\'s Reaction: {", ".join(frame["reaction"])}\n' +
+                    f'Writer\'s Intent: {", ".join(frame["intent"])}\n' +
+                    f'Perceived Label: {frame["perceivedLabel"]}\n'
+
+                    for frame in sampledFrames
+                ]
+
                 nextFrame = workers[workerID]['frames'][sampledIndices[-1]]
 
                 query = 'Headline: ' + nextFrame['headline'] + '\n' + \
-                        'Reader\'s Reaction: ?\n' + 'Writer\'s Intent: ?\n' + 'Perceived Label: ?\n'
+                        'Reader\'s Reactions: ?\n' + 'Writer\'s Intent: ?\n' + 'Perceived Label: ?\n'
 
-                prediction = 'Reader\'s Reaction: ' + nextFrame['reaction'] + '\n' + \
-                                'Writer\'s Intent: ' + nextFrame['intent'] + '\n' + \
-                                'Perceived Label: ' + nextFrame['bias'] + '\n'
+                prediction = f'Reader\'s Reactions: {", ".join(nextFrame["reaction"])}\n' + \
+                             f'Writer\'s Intent: {", ".join(nextFrame["reaction"])}\n' + \
+                             f'Perceived Label: {nextFrame["perceivedLabel"]}\n'
 
                 trajectory = Trajectory(sampledFrames, workerHeader, query, prediction)
                 trajectorySequences.append(trajectory)
 
+        saveObjectsToJsonFile(trajectorySequences, outputFilename)
 
     @staticmethod
     def loadAndCleanMRFDataset(inputPath, outputFilename):
@@ -348,6 +362,7 @@ class MRFDatasetUtility(object):
         groupedMTurkData = MRFDatasetUtility.groupByWorkerId(mTurkData)
         refinedGroupedMTurkData = MRFDatasetUtility.filterColumns(groupedMTurkData)
         workers = MRFDatasetUtility.transformMTurkData(refinedGroupedMTurkData)
+        # todo remove hits with no intent or reaction (low quality headlines)
         # persisting processed data
         saveObjectsToJsonFile(workers, outputFilename) # todo test serialization/deserialization
         return workers
