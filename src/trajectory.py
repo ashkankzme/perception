@@ -45,37 +45,37 @@ class Trajectory(object):
     def generateTrajectorySequencesFromMRFDataset(workers, trajectoryWindowSize, sampleSizePerWorker, outputFilename):
         random.seed(1372)
         trajectorySequences = []
-        for workerID in workers:
-            workerHeader = 'Worker ID: ' + workerID + '\n' + \
-                           'Age: ' + str(workers[workerID]['demographics']['age']) + '\n' + \
-                           'Gender: ' + str(workers[workerID]['demographics']['gender']) + '\n' + \
-                           'Education: ' + str(workers[workerID]['demographics']['education']) + '\n' + \
-                           'Race: ' + str(workers[workerID]['demographics']['race']) + '\n' + \
-                           'Media Diet: ' + str(workers[workerID]['mediaConsumptionRegimen']) + '\n'
+        for worker in workers:
+            workerHeader = 'Worker ID: ' + worker['id'] + '\n' + \
+                           'Age: ' + str(worker['age']) + '\n' + \
+                           'Gender: ' + str(worker['gender']) + '\n' + \
+                           'Education: ' + str(worker['education']) + '\n' + \
+                           "Race: " + ", ".join(worker['race']) + '\n' + \
+                           "Media Diet: " + ", ".join(worker['mediaConsumptionRegimen']) + '\n'
 
             for i in range(sampleSizePerWorker):
                 K = random.randint(trajectoryWindowSize['min'], trajectoryWindowSize['max'])
-                sampledIndices = random.sample(range(len(workers[workerID]['frames'])), K + 1)
+                sampledIndices = random.sample(range(len(worker['annotatedFrames'])), K + 1)
                 sampledIndices = sorted(sampledIndices)
-                sampledFrames = [workers[workerID]['frames'][i] for i in sampledIndices[:-1]]
+                sampledFrames = [worker['annotatedFrames'][i] for i in sampledIndices[:-1]]
 
                 sampledFrames = [
-                    'Headline: ' + frame['headline'] + '\n' +
-                    f'Reader\'s Reaction: {", ".join(frame["reaction"])}\n' +
-                    f'Writer\'s Intent: {", ".join(frame["intent"])}\n' +
-                    f'Perceived Label: {frame["perceivedLabel"]}\n'
+                    'Headline: ' + frame['Input.sentence'] + '\n' +
+                    'Reader\'s Reaction: ' + ", ".join(frame["reaction"]) + '\n' +
+                    'Writer\'s Intent: ' + ", ".join(frame["intent"]) + '\n' +
+                    'Perceived Label: ' + frame["perceivedLabel"] + '\n'
 
                     for frame in sampledFrames
                 ]
 
-                nextFrame = workers[workerID]['frames'][sampledIndices[-1]]
+                nextFrame = worker['annotatedFrames'][sampledIndices[-1]]
 
-                query = 'Headline: ' + nextFrame['headline'] + '\n' + \
+                query = 'Headline: ' + nextFrame['Input.sentence'] + '\n' + \
                         'Reader\'s Reactions: ?\n' + 'Writer\'s Intent: ?\n' + 'Perceived Label: ?\n'
 
-                prediction = f'Reader\'s Reactions: {", ".join(nextFrame["reaction"])}\n' + \
-                             f'Writer\'s Intent: {", ".join(nextFrame["reaction"])}\n' + \
-                             f'Perceived Label: {nextFrame["perceivedLabel"]}\n'
+                prediction = 'Reader\'s Reactions: '+ ", ".join(nextFrame["reaction"]) + '\n' + \
+                             'Writer\'s Intent: ' + ", ".join(nextFrame["reaction"]) + '\n' + \
+                             'Perceived Label: ' + nextFrame["perceivedLabel"] + '\n'
 
                 trajectory = Trajectory(sampledFrames, workerHeader, query, prediction)
                 trajectorySequences.append(trajectory)
