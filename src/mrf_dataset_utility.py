@@ -307,7 +307,9 @@ class MRFDatasetUtility(object):
                 workers.append(
                     HumanWorker(workerId, workerDemographics, workerMediaConsumptionRegimen, refinedGroupedMTurkData[workerId][-1]['LifetimeApprovalRate'])
                 )
-                workers[-1].setFrames(refinedGroupedMTurkData[workerId]) # todo fix formatting
+                workers[-1].setFrames([hit for hit in refinedGroupedMTurkData[workerId]
+                                       if 'Input.sentence' in hit and len(hit['Input.sentence'])
+                                       and (len(hit['intent']) or hit['reaction'])]) # todo fix formatting, remove unwanted rows
 
         return workers
 
