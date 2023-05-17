@@ -1,10 +1,8 @@
 import csv
 import os
-import random
 
 from src.humanWorker import HumanWorker
 from src.utils import saveObjectsToJsonFile
-from src.trajectory import Trajectory
 
 
 class MRFDatasetUtility(object):
@@ -313,47 +311,6 @@ class MRFDatasetUtility(object):
 
         return workers
 
-
-    @staticmethod
-    def generateTrajectorySequencesFromMRFDataset(workers, trajectoryWindowSize, sampleSizePerWorker, outputFilename):
-        random.seed(1372)
-        trajectorySequences = []
-        for workerID in workers:
-            workerHeader = 'Worker ID: ' + workerID + '\n' + \
-                            'Age: ' + str(workers[workerID]['demographics']['age']) + '\n' + \
-                            'Gender: ' + str(workers[workerID]['demographics']['gender']) + '\n' + \
-                            'Education: ' + str(workers[workerID]['demographics']['education']) + '\n' + \
-                            'Race: ' + str(workers[workerID]['demographics']['race']) + '\n' + \
-                            'Media Diet: ' + str(workers[workerID]['mediaConsumptionRegimen']) + '\n'
-
-            for i in range(sampleSizePerWorker):
-                K = random.randint(trajectoryWindowSize.min, trajectoryWindowSize.max)
-                sampledIndices = random.sample(range(len(workers[workerID]['frames'])), K+1)
-                sampledIndices = sorted(sampledIndices)
-                sampledFrames = [workers[workerID]['frames'][i] for i in sampledIndices[:-1]]
-
-                sampledFrames = [
-                    'Headline: ' + frame['headline'] + '\n' +
-                    f'Reader\'s Reaction: {", ".join(frame["reaction"])}\n' +
-                    f'Writer\'s Intent: {", ".join(frame["intent"])}\n' +
-                    f'Perceived Label: {frame["perceivedLabel"]}\n'
-
-                    for frame in sampledFrames
-                ]
-
-                nextFrame = workers[workerID]['frames'][sampledIndices[-1]]
-
-                query = 'Headline: ' + nextFrame['headline'] + '\n' + \
-                        'Reader\'s Reactions: ?\n' + 'Writer\'s Intent: ?\n' + 'Perceived Label: ?\n'
-
-                prediction = f'Reader\'s Reactions: {", ".join(nextFrame["reaction"])}\n' + \
-                             f'Writer\'s Intent: {", ".join(nextFrame["reaction"])}\n' + \
-                             f'Perceived Label: {nextFrame["perceivedLabel"]}\n'
-
-                trajectory = Trajectory(sampledFrames, workerHeader, query, prediction)
-                trajectorySequences.append(trajectory)
-
-        saveObjectsToJsonFile(trajectorySequences, outputFilename)
 
     @staticmethod
     def loadAndCleanMRFDataset(inputPath, outputFilename):
