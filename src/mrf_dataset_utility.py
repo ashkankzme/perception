@@ -1,8 +1,10 @@
 import csv
 import os
+import random
 
 from src.humanWorker import HumanWorker
 from src.utils import saveObjectsToJsonFile
+from src.trajectory import Trajectory
 
 
 class MRFDatasetUtility(object):
@@ -310,8 +312,33 @@ class MRFDatasetUtility(object):
 
 
     @staticmethod
-    def generateTrajectorySequencesFromMRFDataset(workers, outputFilename):
-        pass # todo
+    def generateTrajectorySequencesFromMRFDataset(workers, trajectoryWindowSize, sampleSizePerWorker, outputFilename):
+        random.seed(1372)
+        trajectorySequences = []
+        for workerID in workers:
+            workerHeader = 'Worker ID: ' + workerID + '\n' + \
+                            'Age: ' + str(workers[workerID]['demographics']['age']) + '\n' + \
+                            'Gender: ' + str(workers[workerID]['demographics']['gender']) + '\n' + \
+                            'Education: ' + str(workers[workerID]['demographics']['education']) + '\n' + \
+                            'Race: ' + str(workers[workerID]['demographics']['race']) + '\n' + \
+                            'Media Diet: ' + str(workers[workerID]['mediaConsumptionRegimen']) + '\n'
+
+            for i in range(sampleSizePerWorker):
+                K = random.randint(trajectoryWindowSize.min, trajectoryWindowSize.max)
+                sampledIndices = random.sample(range(len(workers[workerID]['frames'])), K+1)
+                sampledIndices = sorted(sampledIndices)
+                sampledFrames = [workers[workerID]['frames'][i] for i in sampledIndices[:-1]]
+                nextFrame = workers[workerID]['frames'][sampledIndices[-1]]
+
+                query = 'Headline: ' + nextFrame['headline'] + '\n' + \
+                        'Reader\'s Reaction: ?\n' + 'Writer\'s Intent: ?\n' + 'Perceived Label: ?\n'
+
+                prediction = 'Reader\'s Reaction: ' + nextFrame['reaction'] + '\n' + \
+                                'Writer\'s Intent: ' + nextFrame['intent'] + '\n' + \
+                                'Perceived Label: ' + nextFrame['bias'] + '\n'
+
+                trajectory = Trajectory(sampledFrames, workerHeader, query, prediction)
+                trajectorySequences.append(trajectory)
 
 
     @staticmethod
