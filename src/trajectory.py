@@ -58,7 +58,9 @@ class Trajectory(object):
                            "Race: " + ", ".join(worker['race'] if len(worker['race']) else ['unknown']) + '\n' + \
                            "Media Diet: " + ", ".join(worker['mediaConsumptionRegimen'] if len(worker['mediaConsumptionRegimen']) else ['unknown']) + '\n'
 
-            workerSampleSize = min(sampleSizePerWorker, Trajectory.choiceOf(trajectoryWindowSize['max'], len(worker['annotatedFrames']))) # todo: this is a hacky way to limit the number of trajectories per worker
+            maxPossibleTrajectories = Trajectory.choiceOf(trajectoryWindowSize['max'], len(worker['annotatedFrames']))
+            maxPossibleTrajectories = int(maxPossibleTrajectories)
+            workerSampleSize = min(sampleSizePerWorker, maxPossibleTrajectories) # todo: this is a hacky way to limit the number of trajectories per worker
             for i in range(workerSampleSize):
                 K = random.randint(trajectoryWindowSize['min'], trajectoryWindowSize['max'])
                 sampledIndices = random.sample(range(len(worker['annotatedFrames'])), K + 1)
