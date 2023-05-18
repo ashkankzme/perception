@@ -1,4 +1,5 @@
 import random
+import math
 from src.utils import saveObjectsToJsonFile
 
 '''
@@ -41,6 +42,10 @@ class Trajectory(object):
     def toOutputFormat(self):
         return f'{self.prediction}'
 
+
+    @staticmethod
+    def choiceOf(k, n):
+        return math.factorial(n) / (math.factorial(k) * math.factorial(n - k))
     @staticmethod
     def generateTrajectorySequencesFromMRFDataset(workers, trajectoryWindowSize, sampleSizePerWorker, outputFilename):
         random.seed(1372)
@@ -50,10 +55,11 @@ class Trajectory(object):
                            'Age: ' + str(worker['age']) + '\n' + \
                            'Gender: ' + str(worker['gender']) + '\n' + \
                            'Education: ' + str(worker['education']) + '\n' + \
-                           "Race: " + ", ".join(worker['race']) + '\n' + \
-                           "Media Diet: " + ", ".join(worker['mediaConsumptionRegimen']) + '\n'
+                           "Race: " + ", ".join(worker['race'] if len(worker['race']) else ['unknown']) + '\n' + \
+                           "Media Diet: " + ", ".join(worker['mediaConsumptionRegimen'] if len(worker['mediaConsumptionRegimen']) else ['unknown']) + '\n'
 
-            for i in range(sampleSizePerWorker):
+            workerSampleSize = min(sampleSizePerWorker, Trajectory.choiceOf(trajectoryWindowSize['max'], len(worker['annotatedFrames']))) # todo: this is a hacky way to limit the number of trajectories per worker
+            for i in range(workerSampleSize):
                 K = random.randint(trajectoryWindowSize['min'], trajectoryWindowSize['max'])
                 sampledIndices = random.sample(range(len(worker['annotatedFrames'])), K + 1)
                 sampledIndices = sorted(sampledIndices)

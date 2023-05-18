@@ -309,7 +309,8 @@ class MRFDatasetUtility(object):
                 )
                 workers[-1].setFrames([hit for hit in refinedGroupedMTurkData[workerId]
                                        if 'Input.sentence' in hit and len(hit['Input.sentence'])
-                                       and (len(hit['intent']) or hit['reaction'])]) # todo fix formatting, remove unwanted rows
+                                       and (len(hit['intent']) or hit['reaction'])
+                                       and 'perceivedLabel' in hit and hit['perceivedLabel']]) # todo fix formatting, remove unwanted rows
 
         return workers
 
