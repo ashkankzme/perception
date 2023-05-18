@@ -1,6 +1,6 @@
 import random
-from src.mrf_dataset_utility import MRFDatasetUtility as mrfdu
-from src.trajectory import Trajectory
+from mrf_dataset_utility import MRFDatasetUtility as mrfdu
+from trajectory import Trajectory
 from utils import saveObjectsToJsonFile, loadObjectsFromJsonFile
 
 

@@ -1,6 +1,6 @@
 import random
 import math
-from src.utils import saveObjectsToJsonFile
+from utils import saveObjectsToJsonFile
 
 '''
 Trajectory format, with an example:

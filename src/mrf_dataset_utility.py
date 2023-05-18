@@ -1,8 +1,8 @@
 import csv
 import os
 
-from src.humanWorker import HumanWorker
-from src.utils import saveObjectsToJsonFile
+from humanWorker import HumanWorker
+from utils import saveObjectsToJsonFile
 
 
 class MRFDatasetUtility(object):
