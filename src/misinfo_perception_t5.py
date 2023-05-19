@@ -6,12 +6,13 @@ import pytorch_lightning as pl
 
 
 class MisinfoPerceptionT5(pl.LightningModule):
-    def __init__(self, trainingConfig):
+    def __init__(self, trainingConfig, loadLocally=False, localModelPath=None):
         super().__init__()
 
-        self.tokenizer = T5Tokenizer.from_pretrained(defaultConfig.BASE_MODEL_NAME)
-        self.model = T5ForConditionalGeneration.from_pretrained(defaultConfig.BASE_MODEL_NAME, device_map="auto")  # check whether the device_map config makes sense
-        self.trainingConfig = trainingConfig
+        if not loadLocally:
+            self.tokenizer = T5Tokenizer.from_pretrained(defaultConfig.BASE_MODEL_NAME)
+            self.model = T5ForConditionalGeneration.from_pretrained(defaultConfig.BASE_MODEL_NAME, device_map="auto")  # check whether the device_map config makes sense
+            self.trainingConfig = trainingConfig
 
         # freeze all layers after a certain depth, as determined by defaultConfig.FROZEN_LAYER_DEPTH_THRESHOLD
         for param in self.model.parameters()[:defaultConfig.FROZEN_LAYER_DEPTH_THRESHOLD]:  # todo test
@@ -62,12 +63,3 @@ class MisinfoPerceptionT5(pl.LightningModule):
                         'frequency': 1}
 
         return {"optimizer": optimizer, "lr_scheduler": lr_scheduler}
-
-    def train_dataloader(self):
-        return train_dataloader
-
-    def val_dataloader(self):
-        return valid_dataloader
-
-    def test_dataloader(self):
-        return test_dataloader
