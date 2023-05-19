@@ -1,7 +1,6 @@
 torch
 numpy
 transformers
-wandb
 tqdm
 sentence-transformers
 pytorch-lightning

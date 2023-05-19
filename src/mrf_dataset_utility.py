@@ -1,8 +1,10 @@
 import csv
 import os
+import random
 
 from humanWorker import HumanWorker
-from utils import saveObjectsToJsonFile
+from trajectory import Trajectory
+from utils import saveObjectsToJsonFile, loadObjectsFromJsonFile
 
 
 class MRFDatasetUtility(object):
@@ -326,3 +328,20 @@ class MRFDatasetUtility(object):
         # persisting processed data
         saveObjectsToJsonFile(workers, outputFilename) # todo test serialization/deserialization
         return workers
+
+
+    @staticmethod
+    def generateTrajectoriesFromMRFDataset():
+        # workers = mrfdu.loadAndCleanMRFDataset('../data/mturk_data/', '../data/mrf_turk_processed.json')
+        workers = loadObjectsFromJsonFile('../data/mrf_turk_processed.json')
+        # workers = sorted(workers, key=lambda x: len(x['annotatedFrames']), reverse=True)
+        workers = [worker for worker in workers if len(worker['annotatedFrames']) >= 20]  # throwing out workers with less than 10 annotated frames
+        random.seed(1372)
+        random.shuffle(workers)
+
+        trainEvalCutOffIndex = int(len(workers) * 0.8)
+        evalTestCutOffIndex = int(len(workers) * 0.9)
+        trainWorkers, evalWorkers, testWorkers = workers[:trainEvalCutOffIndex], workers[trainEvalCutOffIndex:evalTestCutOffIndex], workers[evalTestCutOffIndex:]
+        Trajectory.generateTrajectorySequencesFromMRFDataset(trainWorkers, {'min': 4, 'max': 8}, 1000000, '../data/trajectories/1_initial/train_trajectories.json')
+        Trajectory.generateTrajectorySequencesFromMRFDataset(evalWorkers, {'min': 4, 'max': 8}, 1000000, '../data/trajectories/1_initial/eval_trajectories.json')
+        Trajectory.generateTrajectorySequencesFromMRFDataset(testWorkers, {'min': 4, 'max': 8}, 1000000, '../data/trajectories/1_initial/test_trajectories.json')

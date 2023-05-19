@@ -6,16 +6,21 @@ import pytorch_lightning as pl
 
 
 class MisinfoPerceptionT5(pl.LightningModule):
-    def __init__(self, trainingConfig, loadLocally=False, localModelPath=None):
+    def __init__(self, dataModule, trainingConfig, loadLocally=False, localModelPath=None):
         super().__init__()
 
-        if not loadLocally:
-            self.tokenizer = T5Tokenizer.from_pretrained(defaultConfig.BASE_MODEL_NAME)
-            self.model = T5ForConditionalGeneration.from_pretrained(defaultConfig.BASE_MODEL_NAME, device_map="auto")  # check whether the device_map config makes sense
-            self.trainingConfig = trainingConfig
+        self.dm = dataModule
+        self.tokenizer = T5Tokenizer.from_pretrained(defaultConfig.BASE_MODEL_NAME)
+        # todo set training config
 
+        if not loadLocally:
+            self.model = T5ForConditionalGeneration.from_pretrained(defaultConfig.BASE_MODEL_NAME, device_map="auto")  # check whether the device_map config makes sense
+        else:
+            self.model = T5ForConditionalGeneration.from_pretrained(localModelPath, device_map="auto")
+
+        # todo check whether freezing the params is necessary
         # freeze all layers after a certain depth, as determined by defaultConfig.FROZEN_LAYER_DEPTH_THRESHOLD
-        for param in self.model.parameters()[:defaultConfig.FROZEN_LAYER_DEPTH_THRESHOLD]:  # todo test
+        for param in self.model.parameters()[:defaultConfig.FROZEN_LAYER_DEPTH_THRESHOLD]:
             param.requires_grad = False
 
     def common_step(self, batch, batch_idx):
@@ -50,11 +55,11 @@ class MisinfoPerceptionT5(pl.LightningModule):
 
         return loss
 
-    def configure_optimizers(self):
+    def configure_optimizers(self):  # todo fix overriding issue
         # create optimizer
         optimizer = AdamW(self.parameters(), lr=self.hparams.lr)
         # create learning rate scheduler
-        num_train_optimization_steps = self.hparams.num_train_epochs * len(train_dataloader)
+        num_train_optimization_steps = self.hparams.num_train_epochs * len(self.train_dataloader())
         lr_scheduler = {'scheduler': get_linear_schedule_with_warmup(optimizer,
                                                                      num_warmup_steps=self.hparams.warmup_steps,
                                                                      num_training_steps=num_train_optimization_steps),
@@ -63,3 +68,18 @@ class MisinfoPerceptionT5(pl.LightningModule):
                         'frequency': 1}
 
         return {"optimizer": optimizer, "lr_scheduler": lr_scheduler}
+
+    def train_dataloader(self):
+        if not self.dm.trainData:
+            self.dm.setup('train')
+        return self.dm.train_dataloader()
+
+    def val_dataloader(self):
+        if not self.dm.valData:
+            self.dm.setup('val')
+        return self.dm.val_dataloader()
+
+    def test_dataloader(self):
+        if not self.dm.testData:
+            self.dm.setup('test')
+        return self.dm.test_dataloader()
