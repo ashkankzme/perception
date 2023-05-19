@@ -5,6 +5,8 @@ from misinfo_perception_t5 import MisinfoPerceptionT5
 from mrf_data_module import MRFDataModule
 
 if __name__ == '__main__':
+
+    # https://colab.research.google.com/github/NielsRogge/Transformers-Tutorials/blob/master/T5/Fine_tune_CodeT5_for_generating_docstrings_from_Ruby_code.ipynb#scrollTo=gq2-xLG_alXH
     # todo initiate decision transformer
     # train, test, val = mrfdu.splitDataset(workers, 0.8, 0.1, 0.1)
     # train architecture, which includes a DT and a PLM
