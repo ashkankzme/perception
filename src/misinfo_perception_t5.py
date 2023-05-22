@@ -6,7 +6,7 @@ import pytorch_lightning as pl
 
 
 class MisinfoPerceptionT5(pl.LightningModule):
-    def __init__(self, dataModule, trainingConfig, loadLocally=False, localModelPath=None):
+    def __init__(self, dataModule, loadLocally=False, localModelPath=None):
         super().__init__()
 
         self.dm = dataModule
@@ -20,8 +20,8 @@ class MisinfoPerceptionT5(pl.LightningModule):
 
         # todo check whether freezing the params is necessary
         # freeze all layers after a certain depth, as determined by defaultConfig.FROZEN_LAYER_DEPTH_THRESHOLD
-        for param in self.model.parameters()[:defaultConfig.FROZEN_LAYER_DEPTH_THRESHOLD]:
-            param.requires_grad = False
+        # for param in self.model.parameters()[:defaultConfig.FROZEN_LAYER_DEPTH_THRESHOLD]:
+        #     param.requires_grad = False
 
     def common_step(self, batch, batch_idx):
         outputs = self(**batch)
