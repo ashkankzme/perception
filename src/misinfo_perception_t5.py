@@ -12,7 +12,7 @@ import default as defaultConfig
 
 
 class MisinfoPerceptionT5(pl.LightningModule):
-    def __init__(self, dataModule, loadLocally=False, localModelPath=None):
+    def __init__(self, dataModule, loadLocally=False, localModelPath=None, lr=5e-5, num_train_epochs=15, warmup_steps=1000):
         super().__init__()
 
         self.dm = dataModule
@@ -29,6 +29,7 @@ class MisinfoPerceptionT5(pl.LightningModule):
         # for param in self.model.parameters()[:defaultConfig.FROZEN_LAYER_DEPTH_THRESHOLD]:
         #     param.requires_grad = False
 
+        self.save_hyperparameters()
     def common_step(self, batch, batch_idx):
         outputs = self(**batch)
         loss = outputs.loss
