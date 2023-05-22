@@ -1,8 +1,14 @@
 import torch
 import torch.nn as nn
-import config.default as defaultConfig
 from transformers import T5Tokenizer, T5ForConditionalGeneration, AdamW, get_linear_schedule_with_warmup
 import pytorch_lightning as pl
+
+
+# remove from here
+import sys
+sys.path.insert(0, '/local2/ashkank/perception/config/')
+import default as defaultConfig
+
 
 
 class MisinfoPerceptionT5(pl.LightningModule):

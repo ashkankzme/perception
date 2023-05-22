@@ -4,3 +4,4 @@ transformers
 tqdm
 sentence-transformers
 pytorch-lightning
+accelerate

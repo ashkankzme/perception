@@ -3,7 +3,13 @@ from pytorch_lightning.callbacks import EarlyStopping, LearningRateMonitor
 from misinfo_perception_t5 import MisinfoPerceptionT5
 from mrf_data_module import MRFDataModule
 from mrf_dataset_utility import MRFDatasetUtility as mrfdu
-import config.default as defaultConfig
+
+
+# remove from here
+import sys
+sys.path.insert(0, '/local2/ashkank/perception/config/')
+import default as defaultConfig
+
 
 if __name__ == '__main__':
 
