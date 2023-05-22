@@ -82,7 +82,7 @@ class Trajectory(object):
                         'Reader\'s Reactions: ?\n' + 'Writer\'s Intent: ?\n' + 'Perceived Label: ?\n'
 
                 prediction = 'Reader\'s Reactions: '+ ", ".join(nextFrame["reaction"]) + '\n' + \
-                             'Writer\'s Intent: ' + ", ".join(nextFrame["reaction"]) + '\n' + \
+                             'Writer\'s Intent: ' + ", ".join(nextFrame["intent"]) + '\n' + \
                              'Perceived Label: ' + nextFrame["perceivedLabel"] + '\n'
 
                 trajectory = Trajectory(sampledFrames, workerHeader, query, prediction)
