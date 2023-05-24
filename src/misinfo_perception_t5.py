@@ -45,11 +45,9 @@ class MisinfoPerceptionT5(pl.LightningModule):
         return loss
 
 
-    def forward(self, inputPrompt):
-        input_ids = self.tokenizer(inputPrompt, return_tensors="pt").input_ids.to("cuda")  # is this parallelizable?
-
-        outputs = self.model.generate(input_ids)
-        print(self.tokenizer.decode(outputs[0]))
+    def forward(self, input_ids, attention_mask, labels=None): # todo test
+        outputs = self.model(input_ids=input_ids, attention_mask=attention_mask, labels=labels)
+        return outputs
 
     def validation_step(self, batch, batch_idx):
         loss = self.common_step(batch, batch_idx)

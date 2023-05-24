@@ -342,6 +342,6 @@ class MRFDatasetUtility(object):
         trainEvalCutOffIndex = int(len(workers) * 0.94)
         evalTestCutOffIndex = int(len(workers) * 0.97)
         trainWorkers, evalWorkers, testWorkers = workers[:trainEvalCutOffIndex], workers[trainEvalCutOffIndex:evalTestCutOffIndex], workers[evalTestCutOffIndex:]
-        Trajectory.generateTrajectorySequencesFromMRFDataset(trainWorkers, {'min': 4, 'max': 8}, 10000, '../data/trajectories/1_initial/train_trajectories.json')
-        Trajectory.generateTrajectorySequencesFromMRFDataset(evalWorkers, {'min': 4, 'max': 8}, 10000, '../data/trajectories/1_initial/eval_trajectories.json')
-        Trajectory.generateTrajectorySequencesFromMRFDataset(testWorkers, {'min': 4, 'max': 8}, 10000, '../data/trajectories/1_initial/test_trajectories.json')
+        Trajectory.generateTrajectorySequencesFromMRFDataset(trainWorkers, {'min': 4, 'max': 8}, 100, '../data/trajectories/1_initial/train_trajectories.json')
+        Trajectory.generateTrajectorySequencesFromMRFDataset(evalWorkers, {'min': 4, 'max': 8}, 100, '../data/trajectories/1_initial/eval_trajectories.json')
+        Trajectory.generateTrajectorySequencesFromMRFDataset(testWorkers, {'min': 4, 'max': 8}, 100, '../data/trajectories/1_initial/test_trajectories.json')

@@ -26,8 +26,8 @@ if __name__ == '__main__':
         mode='min'
     )
     lr_monitor = LearningRateMonitor(logging_interval='step')
-    mrfTrain = MRFDataModule(defaultConfig)
-    model = MisinfoPerceptionT5(mrfTrain)
+    mrf = MRFDataModule(defaultConfig)
+    model = MisinfoPerceptionT5(mrf)
 
     trainer = Trainer(#gpus=1,
                       default_root_dir=defaultConfig.MODEL_PATH + "Checkpoints",
