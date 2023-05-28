@@ -76,15 +76,15 @@ class MisinfoPerceptionT5(pl.LightningModule):
 
     def train_dataloader(self):
         if not self.dm.trainData:
-            self.dm.prepare_data('train')
+            self.dm.prepare_data()
         return self.dm.train_dataloader()
 
     def val_dataloader(self):
         if not self.dm.valData:
-            self.dm.prepare_data('val')
+            self.dm.prepare_data()
         return self.dm.val_dataloader()
 
     def test_dataloader(self):
         if not self.dm.testData:
-            self.dm.prepare_data('test')
+            self.dm.prepare_data()
         return self.dm.test_dataloader()
