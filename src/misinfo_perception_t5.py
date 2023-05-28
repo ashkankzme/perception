@@ -60,7 +60,7 @@ class MisinfoPerceptionT5(pl.LightningModule):
 
         return loss
 
-    def configure_optimizers(self):  # todo fix overriding issue
+    def configure_optimizers(self):
         # create optimizer
         optimizer = AdamW(self.parameters(), lr=self.hparams.lr)
         # create learning rate scheduler
@@ -76,15 +76,15 @@ class MisinfoPerceptionT5(pl.LightningModule):
 
     def train_dataloader(self):
         if not self.dm.trainData:
-            self.dm.setup('train')
+            self.dm.prepare_data('train')
         return self.dm.train_dataloader()
 
     def val_dataloader(self):
         if not self.dm.valData:
-            self.dm.setup('val')
+            self.dm.prepare_data('val')
         return self.dm.val_dataloader()
 
     def test_dataloader(self):
         if not self.dm.testData:
-            self.dm.setup('test')
+            self.dm.prepare_data('test')
         return self.dm.test_dataloader()
