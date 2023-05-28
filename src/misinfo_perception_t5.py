@@ -91,3 +91,17 @@ class MisinfoPerceptionT5(pl.LightningModule):
             self.dm.prepare_data()
             self.dm.setup('test')
         return self.dm.test_dataloader()
+
+
+    def evaluateOneExample(self, inputText, expectedOutputText):
+        # todo test
+        input_ids = self.tokenizer.encode(inputText, return_tensors="pt")
+        generated_ids = self.model.generate(input_ids=input_ids, num_beams=4, max_length=5, early_stopping=True)
+        generated_text = self.tokenizer.decode(generated_ids[0], skip_special_tokens=True, clean_up_tokenization_spaces=True)
+        perceivedLabel = self.extractPerceivedLabelFromPrediction(generated_text)
+        return expectedOutputText == perceivedLabel
+
+
+    @staticmethod
+    def extractPerceivedLabelFromPrediction(text):
+        return "" # todo implement
