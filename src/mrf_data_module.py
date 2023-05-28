@@ -36,7 +36,7 @@ class MRFDataModule(pl.LightningDataModule):
             for j, frame in enumerate(trajectory['inputFrames']):
                 formattedTrajectory += f' <frame_{j}> ' + frame + ' </frame_{j}>'
 
-            formattedTrajectory += ' <query> ' + trajectory['footer'] + ' </query>'
+            formattedTrajectory += ' <query> ' + trajectory['query'] + ' </query>'
             dataPoint['X'] = formattedTrajectory
             dataPoint['y'] = trajectory['prediction']
             newData.append(dataPoint)
