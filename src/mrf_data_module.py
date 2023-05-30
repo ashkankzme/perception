@@ -10,6 +10,7 @@ class MRFDataModule(pl.LightningDataModule):
         self.batchSize = datasetConfig.BATCH_SIZE
         self.datasetPath = datasetConfig.DATASET_PATH
         self.maxInputLength = datasetConfig.MAX_INPUT_LENGTH
+        self.maxOutputLength = datasetConfig.MAX_OUTPUT_LENGTH
         self.tokenizer = T5Tokenizer.from_pretrained(datasetConfig.BASE_MODEL_NAME)
         self.trainData = None
         self.valData = None
@@ -49,10 +50,10 @@ class MRFDataModule(pl.LightningDataModule):
         inputs = [dp['X'] for dp in data]
         outputs = [dp['y'] for dp in data]
 
-        model_inputs = self.tokenizer(inputs, max_length=self.maxInputLength, padding="max_length", truncation=True)
+        model_inputs = self.tokenizer(inputs, max_length=self.maxInputLength, padding="max_length", truncation=True).input_ids
 
         # encode the summaries
-        labels = self.tokenizer(outputs, max_length=self.maxInputLength, padding="max_length", truncation=True).input_ids
+        labels = self.tokenizer(outputs, max_length=self.maxOutputLength, padding="max_length", truncation=True).input_ids
 
         # important: we need to replace the index of the padding tokens by -100
         # such that they are not taken into account by the CrossEntropyLoss
