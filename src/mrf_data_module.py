@@ -81,29 +81,33 @@ class MRFDataModule(pl.LightningDataModule):
         # every GPU, like splitting data, applying
         # transform etc.
 
-        if stage == 'train':
-            self.transformedTrainData = self.transform(self.trainData)
-
-        elif stage == 'val':
-            self.transformedValData = self.transform(self.valData)
-
-        elif stage == 'test':
-            self.transformedTestData = self.transform(self.testData)
+        # if stage == 'train':
+        #     self.transformedTrainData = self.transform(self.trainData)
+        #
+        # elif stage == 'val':
+        #     self.transformedValData = self.transform(self.valData)
+        #
+        # elif stage == 'test':
+        #     self.transformedTestData = self.transform(self.testData)
+        pass
 
 
     def train_dataloader(self):
         if not self.trainDataLoader:
-            self.trainDataLoader = DataLoader(self.transformedTrainData, batch_size=self.batchSize, shuffle=False, num_workers=8)
+            transformedTrainData = self.transform(self.trainData)
+            self.trainDataLoader = DataLoader(transformedTrainData, batch_size=self.batchSize, shuffle=False, num_workers=8)
         return self.trainDataLoader
 
 
     def val_dataloader(self):
         if not self.valDataLoader:
-            self.valDataLoader = DataLoader(self.transformedValData, batch_size=self.batchSize, shuffle=False, num_workers=8)
+            transformedValData = self.transform(self.valData)
+            self.valDataLoader = DataLoader(transformedValData, batch_size=self.batchSize, shuffle=False, num_workers=8)
         return self.valDataLoader
 
 
     def test_dataloader(self):
         if not self.testDataLoader:
-            self.testDataLoader = DataLoader(self.transformedTestData, batch_size=self.batchSize, shuffle=False, num_workers=8)
+            transformedTestData = self.transform(self.testData)
+            self.testDataLoader = DataLoader(transformedTestData, batch_size=self.batchSize, shuffle=False, num_workers=8)
         return self.testDataLoader
