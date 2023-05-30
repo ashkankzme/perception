@@ -66,7 +66,6 @@ class MRFDataModule(pl.LightningDataModule):
         # model_inputs["labels"] = labels_with_ignore_index
         model_inputs = {
             "input_ids": model_inputs.input_ids,
-            "token_type_ids": model_inputs.token_type_ids,
             "attention_mask": model_inputs.attention_mask,
             "labels": labels_with_ignore_index
         }
