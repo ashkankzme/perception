@@ -67,7 +67,7 @@ class MisinfoPerceptionT5(pl.LightningModule):
         # create optimizer
         optimizer = AdamW(self.parameters(), lr=self.hparams.lr)
         # create learning rate scheduler
-        num_train_optimization_steps = self.hparams.num_train_epochs * len(self.train_dataloader()['input_ids'])
+        num_train_optimization_steps = self.hparams.num_train_epochs * len(self.train_dataloader())
         lr_scheduler = {'scheduler': get_linear_schedule_with_warmup(optimizer,
                                                                      num_warmup_steps=self.hparams.warmup_steps,
                                                                      num_training_steps=num_train_optimization_steps),
