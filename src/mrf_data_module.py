@@ -89,14 +89,18 @@ class MRFDataModule(pl.LightningDataModule):
 
 
     def train_dataloader(self):
-        return DataLoader(self.transformedTrainData, batch_size=self.batchSize, shuffle=False, num_workers=8)
+        if not self.trainDataLoader:
+            self.trainDataLoader = DataLoader(self.transformedTrainData, batch_size=self.batchSize, shuffle=False, num_workers=8)
+        return self.trainDataLoader
 
 
     def val_dataloader(self):
-        return DataLoader(self.transformedTrainData, batch_size=self.batchSize, shuffle=False, num_workers=2)
-        # Return DataLoader for Validation Data here
+        if not self.valDataLoader:
+            self.valDataLoader = DataLoader(self.transformedValData, batch_size=self.batchSize, shuffle=False, num_workers=8)
+        return self.valDataLoader
 
 
     def test_dataloader(self):
-        return DataLoader(self.transformedTrainData, batch_size=self.batchSize, shuffle=False, num_workers=2)
-        # Return DataLoader for Testing Data here
+        if not self.testDataLoader:
+            self.testDataLoader = DataLoader(self.transformedTestData, batch_size=self.batchSize, shuffle=False, num_workers=8)
+        return self.testDataLoader
