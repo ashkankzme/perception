@@ -14,8 +14,11 @@ class MRFDataModule(pl.LightningDataModule):
         self.maxOutputLength = datasetConfig.MAX_OUTPUT_LENGTH
         self.tokenizer = T5Tokenizer.from_pretrained(datasetConfig.BASE_MODEL_NAME)
         self.trainData = None
+        self.trainDataLoader = None
         self.valData = None
+        self.valDataLoader = None
         self.testData = None
+        self.testDataLoader = None
 
 
     def prepare_data(self):
