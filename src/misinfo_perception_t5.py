@@ -12,13 +12,14 @@ import default as defaultConfig
 
 
 class MisinfoPerceptionT5(pl.LightningModule):
-    def __init__(self, dataModule, loadLocally=False, localModelPath=None, lr=5e-5, warmup_steps=1000):
+    def __init__(self, dataModule, loadLocally=False, localModelPath=None, lr=5e-5, num_train_epochs=15, warmup_steps=1000):
         super().__init__()
 
         self.dm = dataModule
         self.tokenizer = T5Tokenizer.from_pretrained(defaultConfig.BASE_MODEL_NAME)
         # todo set training config
         self.hparams.lr = lr
+        self.hparams.num_train_epochs = num_train_epochs
         self.hparams.warmup_steps = warmup_steps
 
         if not loadLocally:
