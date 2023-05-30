@@ -1,7 +1,8 @@
 import pytorch_lightning as pl
 from torch.utils.data import DataLoader
 from utils import loadObjectsFromJsonFile
-from transformers import T5Tokenizer, T5ForConditionalGeneration, AdamW, get_linear_schedule_with_warmup
+from transformers import T5Tokenizer
+from datasets import Dataset
 
 
 class MRFDataModule(pl.LightningDataModule):
@@ -50,7 +51,7 @@ class MRFDataModule(pl.LightningDataModule):
         inputs = [dp['X'] for dp in data]
         outputs = [dp['y'] for dp in data]
 
-        input_ids = self.tokenizer(inputs, max_length=self.maxInputLength, padding="max_length", truncation=True).input_ids
+        model_inputs = self.tokenizer(inputs, max_length=self.maxInputLength, padding="max_length", truncation=True)
 
         # encode the summaries
         labels = self.tokenizer(outputs, max_length=self.maxOutputLength, padding="max_length", truncation=True).input_ids
@@ -62,8 +63,15 @@ class MRFDataModule(pl.LightningDataModule):
             labels_example = [label if label != 0 else -100 for label in labels_example]
             labels_with_ignore_index.append(labels_example)
 
-        model_inputs = {"input_ids": input_ids, "labels": labels_with_ignore_index}
-        return model_inputs
+        # model_inputs["labels"] = labels_with_ignore_index
+        model_inputs = {
+            "input_ids": model_inputs.input_ids,
+            "token_type_ids": model_inputs.token_type_ids,
+            "attention_mask": model_inputs.attention_mask,
+            "labels": labels_with_ignore_index
+        }
+
+        return Dataset.from_dict(model_inputs)
 
 
     def setup(self, stage='test'):
