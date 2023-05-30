@@ -95,19 +95,19 @@ class MRFDataModule(pl.LightningDataModule):
     def train_dataloader(self):
         if not self.trainDataLoader:
             transformedTrainData = self.transform(self.trainData)
-            self.trainDataLoader = DataLoader(transformedTrainData, batch_size=self.batchSize, shuffle=False, num_workers=1)
+            self.trainDataLoader = DataLoader(transformedTrainData, batch_size=self.batchSize, shuffle=False)
         return self.trainDataLoader
 
 
     def val_dataloader(self):
         if not self.valDataLoader:
             transformedValData = self.transform(self.valData)
-            self.valDataLoader = DataLoader(transformedValData, batch_size=self.batchSize, shuffle=False, num_workers=1)
+            self.valDataLoader = DataLoader(transformedValData, batch_size=self.batchSize, shuffle=False)
         return self.valDataLoader
 
 
     def test_dataloader(self):
         if not self.testDataLoader:
             transformedTestData = self.transform(self.testData)
-            self.testDataLoader = DataLoader(transformedTestData, batch_size=self.batchSize, shuffle=False, num_workers=1)
+            self.testDataLoader = DataLoader(transformedTestData, batch_size=self.batchSize, shuffle=False)
         return self.testDataLoader
