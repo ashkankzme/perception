@@ -27,6 +27,7 @@ if __name__ == '__main__':
     )
     lr_monitor = LearningRateMonitor(logging_interval='step')
     mrf = MRFDataModule(defaultConfig)
+    mrf.prepare_data()
     model = MisinfoPerceptionT5(mrf)
 
     trainer = Trainer(#gpus=1,

@@ -29,7 +29,10 @@ class MRFDataModule(pl.LightningDataModule):
         # self.valData = self.formatData(self.valData)
         # self.testData = loadObjectsFromJsonFile(self.datasetPath + "test_trajectories.json")
         # self.testData = self.formatData(self.testData)
-        pass
+
+        self.trainDataLoader = self._wrapInDatasetObj("train_trajectories.json")
+        self.valDataLoader = self._wrapInDatasetObj("eval_trajectories.json")
+        self.testDataLoader = self._wrapInDatasetObj("test_trajectories.json")
 
 
     def setup(self, stage='test'):
@@ -50,20 +53,23 @@ class MRFDataModule(pl.LightningDataModule):
 
     def train_dataloader(self):
         if not self.trainDataLoader:
-            transformedTrainData = MRFDataset(self.datasetPath + "train_trajectories.json")
-            self.trainDataLoader = DataLoader(transformedTrainData, batch_size=self.batchSize, shuffle=False)
+            self.trainDataLoader = self._wrapInDatasetObj("train_trajectories.json")
         return self.trainDataLoader
 
 
     def val_dataloader(self):
         if not self.valDataLoader:
-            transformedValData = MRFDataset(self.datasetPath + "eval_trajectories.json")
-            self.valDataLoader = DataLoader(transformedValData, batch_size=self.batchSize, shuffle=False)
+            self.valDataLoader = self._wrapInDatasetObj("eval_trajectories.json")
         return self.valDataLoader
 
 
     def test_dataloader(self):
         if not self.testDataLoader:
-            transformedTestData = MRFDataset(self.datasetPath + "test_trajectories.json")
-            self.testDataLoader = DataLoader(transformedTestData, batch_size=self.batchSize, shuffle=False)
+            self.testDataLoader = self._wrapInDatasetObj("test_trajectories.json")
         return self.testDataLoader
+
+
+    def _wrapInDatasetObj(self, fileName):
+        transformedData = MRFDataset(self.datasetPath + fileName)
+        # transformedData.set_format(type='torch', columns=['input_ids', 'attention_mask', 'labels'])
+        return DataLoader(transformedData, batch_size=self.batchSize, shuffle=False)

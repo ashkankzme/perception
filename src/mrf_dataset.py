@@ -2,6 +2,7 @@ from __future__ import annotations
 from torch.utils.data import Dataset
 from utils import loadObjectsFromJsonFile
 from transformers import T5Tokenizer
+import torch
 
 
 # remove from here
@@ -21,7 +22,7 @@ class MRFDataset(Dataset):
 
 
     def __len__(self):
-        return len(self.data['input_ids'])
+        return len(self.data)
 
     def __getitem__(self, idx):
         return self.data[idx]
@@ -60,9 +61,9 @@ class MRFDataset(Dataset):
 
         # model_inputs["labels"] = labels_with_ignore_index
         model_inputs = [{
-            "input_ids": model_inputs.input_ids[idx],
-            "attention_mask": model_inputs.attention_mask[idx],
-            "labels": labels_with_ignore_index[idx]
+            "input_ids": torch.as_tensor(model_inputs.input_ids[idx]),
+            "attention_mask": torch.as_tensor(model_inputs.attention_mask[idx]),
+            "labels": torch.as_tensor(labels_with_ignore_index[idx])
         } for idx in range(len(model_inputs.input_ids))]
 
         return model_inputs
