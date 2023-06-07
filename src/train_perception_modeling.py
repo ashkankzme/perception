@@ -27,11 +27,13 @@ if __name__ == '__main__':
     )
     lr_monitor = LearningRateMonitor(logging_interval='step')
     mrf = MRFDataModule(defaultConfig)
-    mrf.prepare_data()
-    model = MisinfoPerceptionT5(mrf)
+    # mrf.prepare_data()
+    model = MisinfoPerceptionT5(1000000)
 
-    trainer = Trainer(#gpus=1,
+
+    trainer = Trainer(accelerator='cuda',
+                      devices='auto',
                       default_root_dir=defaultConfig.MODEL_PATH + "Checkpoints",
                       callbacks=[early_stop_callback, lr_monitor])
-    trainer.fit(model)
+    trainer.fit(model, datamodule=mrf)
     model.model.save_pretrained(defaultConfig.MODEL_PATH + "trained_model")

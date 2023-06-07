@@ -12,11 +12,12 @@ import default as defaultConfig
 
 
 class MisinfoPerceptionT5(pl.LightningModule):
-    def __init__(self, dataModule, loadLocally=False, localModelPath=None, lr=5e-5, num_train_epochs=15, warmup_steps=1000):
+    def __init__(self, trainSetLength, loadLocally=False, localModelPath=None, lr=5e-5, num_train_epochs=15, warmup_steps=1000):
         super().__init__()
+        self.save_hyperparameters()
 
-        self.dm = dataModule
-        self.tokenizer = T5Tokenizer.from_pretrained(defaultConfig.BASE_MODEL_NAME)
+        self.trainSetLength = trainSetLength
+        self.tokenizer = T5Tokenizer.from_pretrained(defaultConfig.BASE_MODEL_NAME, device_map="auto")
         # todo set training config
         self.hparams.lr = lr
         self.hparams.num_train_epochs = num_train_epochs
@@ -32,7 +33,6 @@ class MisinfoPerceptionT5(pl.LightningModule):
         # for param in self.model.parameters()[:defaultConfig.FROZEN_LAYER_DEPTH_THRESHOLD]:
         #     param.requires_grad = False
 
-        self.save_hyperparameters()
     def common_step(self, batch, batch_idx):
         outputs = self(**batch)
         loss = outputs.loss
@@ -67,7 +67,7 @@ class MisinfoPerceptionT5(pl.LightningModule):
         # create optimizer
         optimizer = AdamW(self.parameters(), lr=self.hparams.lr)
         # create learning rate scheduler
-        num_train_optimization_steps = self.hparams.num_train_epochs * len(self.train_dataloader())
+        num_train_optimization_steps = self.hparams.num_train_epochs * self.trainSetLength
         lr_scheduler = {'scheduler': get_linear_schedule_with_warmup(optimizer,
                                                                      num_warmup_steps=self.hparams.warmup_steps,
                                                                      num_training_steps=num_train_optimization_steps),
@@ -77,14 +77,14 @@ class MisinfoPerceptionT5(pl.LightningModule):
 
         return {"optimizer": optimizer, "lr_scheduler": lr_scheduler}
 
-    def train_dataloader(self):
-        return self.dm.train_dataloader()
-
-    def val_dataloader(self):
-        return self.dm.val_dataloader()
-
-    def test_dataloader(self):
-        return self.dm.test_dataloader()
+    # def train_dataloader(self):
+    #     return self.dm.train_dataloader()
+    #
+    # def val_dataloader(self):
+    #     return self.dm.val_dataloader()
+    #
+    # def test_dataloader(self):
+    #     return self.dm.test_dataloader()
 
 
     def evaluateOneExample(self, inputText, expectedOutputText):
