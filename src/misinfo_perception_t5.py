@@ -14,19 +14,18 @@ import default as defaultConfig
 class MisinfoPerceptionT5(pl.LightningModule):
     def __init__(self, trainSetLength, loadLocally=False, localModelPath=None, lr=5e-5, num_train_epochs=15, warmup_steps=1000):
         super().__init__()
-        self.save_hyperparameters()
 
         self.trainSetLength = trainSetLength
-        self.tokenizer = T5Tokenizer.from_pretrained(defaultConfig.BASE_MODEL_NAME, device_map="auto")
+        self.tokenizer = T5Tokenizer.from_pretrained(defaultConfig.BASE_MODEL_NAME)
         # todo set training config
         self.hparams.lr = lr
         self.hparams.num_train_epochs = num_train_epochs
         self.hparams.warmup_steps = warmup_steps
 
         if not loadLocally:
-            self.model = T5ForConditionalGeneration.from_pretrained(defaultConfig.BASE_MODEL_NAME, device_map="auto")  # check whether the device_map config makes sense
+            self.model = T5ForConditionalGeneration.from_pretrained(defaultConfig.BASE_MODEL_NAME)
         else:
-            self.model = T5ForConditionalGeneration.from_pretrained(localModelPath, device_map="auto")
+            self.model = T5ForConditionalGeneration.from_pretrained(localModelPath)
 
         # todo check whether freezing the params is necessary
         # freeze all layers after a certain depth, as determined by defaultConfig.FROZEN_LAYER_DEPTH_THRESHOLD
