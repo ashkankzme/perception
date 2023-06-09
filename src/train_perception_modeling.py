@@ -33,7 +33,7 @@ if __name__ == '__main__':
 
     trainer = Trainer(accelerator='cuda',
                       strategy='ddp',
-                      devices=[1, 2, 3],
+                      devices=[2, 3],
                       default_root_dir=defaultConfig.MODEL_PATH + "Checkpoints",
                       callbacks=[early_stop_callback, lr_monitor])
     trainer.fit(model, datamodule=mrf)

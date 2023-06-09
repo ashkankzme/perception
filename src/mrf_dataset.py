@@ -17,7 +17,7 @@ class MRFDataset(Dataset):
         self.datasetPath = datasetPath
         self.tokenizer = T5Tokenizer.from_pretrained(defaultConfig.BASE_MODEL_NAME)
         self.data = loadObjectsFromJsonFile(self.datasetPath)
-        self.data = self.formatInput(self.data)
+        self.data = MRFDataset.formatInput(self.data)
         self.data = self.transform(self.data)
 
 
@@ -27,7 +27,8 @@ class MRFDataset(Dataset):
     def __getitem__(self, idx):
         return self.data[idx]
 
-    def formatInput(self, inputs):
+    @staticmethod
+    def formatInput(inputs):
         formatedInput = []
         for i, trajectory in enumerate(inputs):
             dataPoint = {'X': '', 'y': ''}

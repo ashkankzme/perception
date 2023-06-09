@@ -96,5 +96,5 @@ class MisinfoPerceptionT5(pl.LightningModule):
 
 
     @staticmethod
-    def extractPerceivedLabelFromPrediction(text):
+    def extractPerceivedLabelFromPrediction(yPred):
         return "" # todo implement
