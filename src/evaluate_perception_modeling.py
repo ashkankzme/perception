@@ -1,8 +1,17 @@
 from mrf_dataset import MRFDataset
 from misinfo_perception_t5 import MisinfoPerceptionT5
+from utils import loadObjectsFromJsonFile
 
+# remove from here
+import sys
+sys.path.insert(0, '/local2/ashkank/perception/config/')
+import default as defaultConfig
 
 if __name__ == '__main__':
+    # dataset = loadObjectsFromJsonFile('/local2/ashkank/perception/data/trajectories/1_initial/train_trajectories.json')
+    # dataset = MRFDataset.formatInput(dataset)
+    # print('dataset avg length is: ', sum([len(x['X'].split()) for x in dataset]) / len(dataset))
+
 
     model = MisinfoPerceptionT5(1000000, loadLocally=True,
                                 localModelPath='/local2/ashkank/perception/models/1_initial/trained_model')
@@ -18,16 +27,14 @@ if __name__ == '__main__':
             "Headline: Nasty Nets Cheer Biden Calling Trump 'Climate Arsonist'\nReader's Reaction: distrustful, skip the article\nWriter's Intent: the administration in power is anti-environment, the government is operating selfishly, tree cutting is an environmental problem\nPerceived Label: misinformation\n"
         ],
         "header": "Worker ID: AFIK3VBMMX6G6\nAge: 3\nGender: 2\nEducation: 3\nRace: white\nMedia Diet: washingtonPost, npr, other, newYorkTimes\n",
-        "query": "Headline: Frigid in Chicago Must Mean Global Warming\nReader's Reactions: ?\nWriter's Intent: ?\nPerceived Label: ?\n",
+        "query": "Headline: Frigid in Chicago Must Mean Global Warming\nPerceived Label: ?\nReader's Reactions: ?\nWriter's Intent: ?\n",
         # "prediction": "Reader's Reactions: \nWriter's Intent: society overreacts, environmentalists over-apply global warming, temperatures are not rising\nPerceived Label: misinformation\n"
         "prediction": ""
     }]
 
     testInput = MRFDataset.formatInput(testDataPoint)
-
-
-
-
+    print(testInput[0]['X'])
+    print('--' * 20)
     input_ids = model.tokenizer(testInput[0]['X'], return_tensors='pt').input_ids
     output_ids = model.model.generate(input_ids)
     output = model.tokenizer.decode(output_ids[0], skip_special_tokens=True)

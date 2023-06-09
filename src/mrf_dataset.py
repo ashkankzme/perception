@@ -32,9 +32,9 @@ class MRFDataset(Dataset):
         formatedInput = []
         for i, trajectory in enumerate(inputs):
             dataPoint = {'X': '', 'y': ''}
-            formattedTrajectory = '<header> ' + trajectory['header'] + ' </header>'
+            formattedTrajectory = '<header> ' + trajectory['header'] + ' </header>\n'
             for j, frame in enumerate(trajectory['inputFrames']):
-                formattedTrajectory += f' <frame_{j}> ' + frame + ' </frame_{j}>'
+                formattedTrajectory += f' <frame_{j}> ' + frame + f' </frame_{j}>\n'
 
             formattedTrajectory += ' <query> ' + trajectory['query'] + ' </query>'
             dataPoint['X'] = formattedTrajectory
