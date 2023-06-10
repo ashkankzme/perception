@@ -8,7 +8,7 @@ from mrf_dataset_utility import MRFDatasetUtility as mrfdu
 # remove from here
 import sys
 sys.path.insert(0, '/local2/ashkank/perception/config/')
-import default as defaultConfig
+from trainingConfigs import default, bigDataSmallModel, bigDataMediumModel, bigDataBigModel
 
 
 if __name__ == '__main__':
