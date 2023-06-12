@@ -8,6 +8,7 @@ from mrf_dataset import MRFDataset
 class MRFDataModule(pl.LightningDataModule):
     def __init__(self, datasetConfig):
         super().__init__()
+        self.config = datasetConfig
         self.batchSize = datasetConfig.BATCH_SIZE
         self.datasetPath = datasetConfig.DATASET_PATH
         self.maxInputLength = datasetConfig.MAX_INPUT_LENGTH
@@ -17,8 +18,6 @@ class MRFDataModule(pl.LightningDataModule):
         self.trainDataLoader = None
         self.valDataLoader = None
         self.testDataLoader = None
-
-        self.config = datasetConfig
 
 
     def prepare_data(self):

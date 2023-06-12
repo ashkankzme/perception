@@ -8,12 +8,13 @@ import torch
 class MRFDataset(Dataset):
     def __init__(self, datasetPath, config):
         super().__init__()
+        self.config = config
         self.datasetPath = datasetPath
         self.tokenizer = T5Tokenizer.from_pretrained(config.BASE_MODEL_NAME)
         self.data = loadObjectsFromJsonFile(self.datasetPath)
         self.data = MRFDataset.formatInput(self.data)
         self.data = self.transform(self.data)
-        self.config = config
+
 
 
     def __len__(self):
