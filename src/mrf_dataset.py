@@ -5,20 +5,15 @@ from transformers import T5Tokenizer
 import torch
 
 
-# remove from here
-import sys
-sys.path.insert(0, '/local2/ashkank/perception/config/')
-import default as defaultConfig
-
-
 class MRFDataset(Dataset):
-    def __init__(self, datasetPath):
+    def __init__(self, datasetPath, config):
         super().__init__()
         self.datasetPath = datasetPath
-        self.tokenizer = T5Tokenizer.from_pretrained(defaultConfig.BASE_MODEL_NAME)
+        self.tokenizer = T5Tokenizer.from_pretrained(config.BASE_MODEL_NAME)
         self.data = loadObjectsFromJsonFile(self.datasetPath)
         self.data = MRFDataset.formatInput(self.data)
         self.data = self.transform(self.data)
+        self.config = config
 
 
     def __len__(self):
@@ -48,10 +43,10 @@ class MRFDataset(Dataset):
         inputs = [dp['X'] for dp in rawDataset]
         outputs = [dp['y'] for dp in rawDataset]
 
-        model_inputs = self.tokenizer(inputs, max_length=defaultConfig.MAX_INPUT_LENGTH, padding="max_length", truncation=True)
+        model_inputs = self.tokenizer(inputs, max_length=self.config.MAX_INPUT_LENGTH, padding="max_length", truncation=True)
 
         # encode the summaries
-        labels = self.tokenizer(outputs, max_length=defaultConfig.MAX_OUTPUT_LENGTH, padding="max_length", truncation=True).input_ids
+        labels = self.tokenizer(outputs, max_length=self.config.MAX_OUTPUT_LENGTH, padding="max_length", truncation=True).input_ids
 
         # important: we need to replace the index of the padding tokens by -100
         # such that they are not taken into account by the CrossEntropyLoss

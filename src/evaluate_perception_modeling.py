@@ -2,10 +2,6 @@ from mrf_dataset import MRFDataset
 from misinfo_perception_t5 import MisinfoPerceptionT5
 from utils import loadObjectsFromJsonFile
 
-# remove from here
-import sys
-sys.path.insert(0, '/local2/ashkank/perception/config/')
-import default as defaultConfig
 
 if __name__ == '__main__':
     # dataset = loadObjectsFromJsonFile('/local2/ashkank/perception/data/trajectories/1_initial/train_trajectories.json')

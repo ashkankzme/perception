@@ -57,7 +57,7 @@ if __name__ == '__main__':
     lr_monitor = LearningRateMonitor(logging_interval='step')
     mrf = MRFDataModule(trainingConfig)
     mrf.prepare_data()
-    model = MisinfoPerceptionT5(len(mrf.trainDataLoader))
+    model = MisinfoPerceptionT5(trainingConfig, len(mrf.trainDataLoader))
 
 
     trainer = Trainer(accelerator='cuda',
