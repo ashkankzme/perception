@@ -331,7 +331,7 @@ class MRFDatasetUtility(object):
 
 
     @staticmethod
-    def generateTrajectoriesFromMRFDataset():
+    def generateTrajectoriesFromMRFDataset(samplingRate, outputPath):
         # workers = mrfdu.loadAndCleanMRFDataset('../data/mturk_data/', '../data/mrf_turk_processed.json')
         workers = loadObjectsFromJsonFile('../data/mrf_turk_processed.json')
         # workers = sorted(workers, key=lambda x: len(x['annotatedFrames']), reverse=True)
@@ -339,9 +339,9 @@ class MRFDatasetUtility(object):
         random.seed(1372)
         random.shuffle(workers)
 
-        trainEvalCutOffIndex = int(len(workers) * 0.94)
-        evalTestCutOffIndex = int(len(workers) * 0.97)
+        trainEvalCutOffIndex = int(len(workers) * 0.9)
+        evalTestCutOffIndex = int(len(workers) * 0.92)
         trainWorkers, evalWorkers, testWorkers = workers[:trainEvalCutOffIndex], workers[trainEvalCutOffIndex:evalTestCutOffIndex], workers[evalTestCutOffIndex:]
-        Trajectory.generateTrajectorySequencesFromMRFDataset(trainWorkers, {'min': 4, 'max': 8}, 100, '../data/trajectories/1_initial/train_trajectories.json')
-        Trajectory.generateTrajectorySequencesFromMRFDataset(evalWorkers, {'min': 4, 'max': 8}, 100, '../data/trajectories/1_initial/eval_trajectories.json')
-        Trajectory.generateTrajectorySequencesFromMRFDataset(testWorkers, {'min': 4, 'max': 8}, 100, '../data/trajectories/1_initial/test_trajectories.json')
+        Trajectory.generateTrajectorySequencesFromMRFDataset(trainWorkers, {'min': 4, 'max': 8}, samplingRate, outputPath+'train_trajectories.json')
+        Trajectory.generateTrajectorySequencesFromMRFDataset(evalWorkers, {'min': 4, 'max': 8}, samplingRate, outputPath+'eval_trajectories.json')
+        Trajectory.generateTrajectorySequencesFromMRFDataset(testWorkers, {'min': 4, 'max': 8}, samplingRate, outputPath+'test_trajectories.json')

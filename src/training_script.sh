@@ -1,4 +1,4 @@
-python train_perception_modeling.py default &&
-python train_perception_modeling.py bigDataSmallModel &&
-python train_perception_modeling.py bigDataMediumModel &&
-python train_perception_modeling.py bigDataBigModel
+python train_perception_modeling.py default gen &&
+python train_perception_modeling.py bigDataSmallModel gen &&
+python train_perception_modeling.py bigDataMediumModel load &&
+python train_perception_modeling.py bigDataBigModel load
