@@ -59,9 +59,9 @@ class MRFDataset(Dataset):
         # model_inputs["labels"] = labels_with_ignore_index
 
         model_inputs = [{
-            "input_ids": torch.Tensor(model_inputs.input_ids[idx]).long(),
-            "attention_mask": torch.Tensor(model_inputs.attention_mask[idx]).long(),
-            "labels": torch.Tensor(labels_with_ignore_index[idx]).long(),
+            "input_ids": torch.tensor(model_inputs.input_ids[idx], dtype=torch.long, requires_grad=True),
+            "attention_mask": torch.tensor(model_inputs.attention_mask[idx], dtype=torch.long, requires_grad=True),
+            "labels": torch.tensor(labels_with_ignore_index[idx], dtype=torch.long, requires_grad=True),
         } for idx in range(len(model_inputs.input_ids))]
 
         return model_inputs
