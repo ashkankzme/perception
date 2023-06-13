@@ -8,7 +8,8 @@ import time, sys
 
 # remove from here
 import sys
-sys.path.insert(0, '/local2/ashkank/perception/config/')
+# sys.path.insert(0, '/local2/ashkank/perception/config/')
+sys.path.insert(0, '/home/ashkank/perception/config/')
 from trainingConfigs import default, bigDataSmallModel, bigDataMediumModel, bigDataBigModel
 
 
