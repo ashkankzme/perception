@@ -6,7 +6,7 @@
 #SBATCH --account=mihalcea0
 #SBATCH --cpus-per-task=16
 #SBATCH --mem=64G
-#SBATCH --gres=gpu:8
+#SBATCH --gres=gpu:4
 #SBATCH --partition=spgpu
 #SBATCH --output=/home/%u/logs/%x-%j.log
 #SBATCH --nodes=1
