@@ -2,8 +2,8 @@
 #SBATCH --job-name=misinfo_perception_modeling
 #SBATCH --mail-user=ashkank@umich.edu
 #SBATCH --mail-type=BEGIN,END
-#SBATCH --time=5:00:00
-#SBATCH --account=mihalcea98
+#SBATCH --time=4:00:00
+#SBATCH --account=mihalcea1
 #SBATCH --cpus-per-task=12
 #SBATCH --gres=gpu:4
 #SBATCH --partition=spgpu
