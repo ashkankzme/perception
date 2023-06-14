@@ -10,7 +10,7 @@ class MisinfoPerceptionT5(pl.LightningModule):
 
         self.config = config
         self.trainSetLength = trainSetLength
-        self.tokenizer = T5Tokenizer.from_pretrained(self.config.BASE_MODEL_NAME)
+        # self.tokenizer = T5Tokenizer.from_pretrained(self.config.BASE_MODEL_NAME)
         # todo set training config
         self.hparams.lr = lr
         self.hparams.num_train_epochs = num_train_epochs
