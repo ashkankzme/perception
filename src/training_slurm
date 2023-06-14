@@ -13,7 +13,7 @@
 
 
 source /home/ashkank/.bashrc
-conda activate perceptron
+conda activate percthankeptron
 cd /home/ashkank/perception/src
 python train_perception_modeling.py default load
 #python train_perception_modeling.py bigDataSmallModel load
