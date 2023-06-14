@@ -34,28 +34,31 @@ class MisinfoPerceptionT5(pl.LightningModule):
         # return loss
 
     def training_step(self, batch, batch_idx):
-        loss = self.common_step(batch, batch_idx)
+        return self.common_step(batch, batch_idx)
+        # loss = self.common_step(batch, batch_idx)
         # logs metrics for each training_step,
         # and the average across the epoch
-        self.log("training_loss", loss)
+        # self.log("training_loss", loss)
 
-        return loss
+        # return loss
 
 
     def forward(self, input_ids, attention_mask, labels=None): # todo test
-        outputs = self.model(input_ids=input_ids, attention_mask=attention_mask, labels=labels)
-        return outputs
+        return self.model(input_ids=input_ids, attention_mask=attention_mask, labels=labels)
+        # outputs = self.model(input_ids=input_ids, attention_mask=attention_mask, labels=labels)
+        # return outputs
 
     def validation_step(self, batch, batch_idx):
-        loss = self.common_step(batch, batch_idx)
-        self.log("validation_loss", loss, on_epoch=True)
-
-        return loss
+        return self.common_step(batch, batch_idx)
+        # loss = self.common_step(batch, batch_idx)
+        # self.log("validation_loss", loss, on_epoch=True)
+        #
+        # return loss
 
     def test_step(self, batch, batch_idx):
-        loss = self.common_step(batch, batch_idx)
-
-        return loss
+        return self.common_step(batch, batch_idx)
+        # loss = self.common_step(batch, batch_idx)
+        # return loss
 
     def configure_optimizers(self):
         # create optimizer
