@@ -28,9 +28,10 @@ class MisinfoPerceptionT5(pl.LightningModule):
 
     def common_step(self, batch, batch_idx):
         outputs = self(**batch)
-        loss = outputs.loss
-
-        return loss
+        return outputs.loss
+        # loss = outputs.loss
+        #
+        # return loss
 
     def training_step(self, batch, batch_idx):
         loss = self.common_step(batch, batch_idx)
