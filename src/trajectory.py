@@ -44,13 +44,13 @@ class Trajectory(object):
         formatedInput = []
         for i, trajectory in enumerate(inputs):
             dataPoint = {'X': '', 'y': ''}
-            formattedTrajectory = '<header> ' + trajectory['header'] + ' </header>\n'
-            for j, frame in enumerate(trajectory['inputFrames']):
+            formattedTrajectory = '<header> ' + trajectory.header + ' </header>\n'
+            for j, frame in enumerate(trajectory.inputFrames):
                 formattedTrajectory += f' <frame_{j}> ' + frame + f' </frame_{j}>\n'
 
-            formattedTrajectory += ' <query> ' + trajectory['query'] + ' </query>'
+            formattedTrajectory += ' <query> ' + trajectory.query + ' </query>'
             dataPoint['X'] = formattedTrajectory
-            dataPoint['y'] = trajectory['prediction']
+            dataPoint['y'] = trajectory.prediction
             formatedInput.append(dataPoint)
 
         return formatedInput
