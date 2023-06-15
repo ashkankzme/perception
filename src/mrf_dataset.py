@@ -1,7 +1,7 @@
 from __future__ import annotations
 from torch.utils.data import Dataset
 from utils import loadObjectsFromJsonFile
-from transformers import T5Tokenizer
+from transformers import AutoTokenizer
 import torch
 
 
@@ -10,7 +10,7 @@ class MRFDataset(Dataset):
         super().__init__()
         self.config = config
         self.datasetPath = datasetPath
-        self.tokenizer = T5Tokenizer.from_pretrained(config.BASE_MODEL_NAME)
+        self.tokenizer = AutoTokenizer.from_pretrained(config.BASE_MODEL_NAME)
         self.data = loadObjectsFromJsonFile(self.datasetPath)
         self.data = MRFDataset.formatInput(self.data)
         self.data = self.transform(self.data)

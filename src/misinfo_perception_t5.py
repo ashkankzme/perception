@@ -1,6 +1,6 @@
 import torch
 import torch.nn as nn
-from transformers import T5Tokenizer, T5ForConditionalGeneration, AdamW, get_linear_schedule_with_warmup
+from transformers import AdamW, get_linear_schedule_with_warmup, AutoModelForSeq2SeqLM
 import pytorch_lightning as pl
 
 
@@ -17,9 +17,9 @@ class MisinfoPerceptionT5(pl.LightningModule):
         self.hparams.warmup_steps = warmup_steps
 
         if not loadLocally:
-            self.model = T5ForConditionalGeneration.from_pretrained(self.config.BASE_MODEL_NAME)
+            self.model = AutoModelForSeq2SeqLM.from_pretrained(self.config.BASE_MODEL_NAME)
         else:
-            self.model = T5ForConditionalGeneration.from_pretrained(localModelPath)
+            self.model = AutoModelForSeq2SeqLM.from_pretrained(localModelPath)
 
         # todo check whether freezing the params is necessary
         # freeze all layers after a certain depth, as determined by defaultConfig.FROZEN_LAYER_DEPTH_THRESHOLD

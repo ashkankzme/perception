@@ -5,9 +5,6 @@ from mrf_data_module import MRFDataModule
 from mrf_dataset_utility import MRFDatasetUtility as mrfdu
 import time, sys
 
-
-# remove from here
-import sys
 # sys.path.insert(0, '/local2/ashkank/perception/config/')
 sys.path.insert(0, '/home/ashkank/perception/config/')
 from trainingConfigs import default, bigDataSmallModel, bigDataMediumModel, bigDataBigModel
@@ -64,7 +61,7 @@ if __name__ == '__main__':
     trainer = Trainer(accelerator='cuda',
                       strategy='ddp',
                       devices='auto',
-                      # devices=[0, 2, 3],
+                      # devices=[1, 2, 3],
                       default_root_dir=trainingConfig.MODEL_PATH + "Checkpoints",
                       callbacks=[early_stop_callback, lr_monitor])
     trainer.fit(model, datamodule=mrf)
