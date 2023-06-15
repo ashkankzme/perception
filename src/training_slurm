@@ -9,7 +9,7 @@
 #SBATCH --partition=spgpu
 #SBATCH --output=/home/%u/logs/%x-%j.log
 #SBATCH --nodes=1
-#SBATCH --mem-per-cpu=8g
+#SBATCH --mem-per-cpu=16g
 
 
 source /home/ashkank/.bashrc
