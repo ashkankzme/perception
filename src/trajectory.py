@@ -1,6 +1,6 @@
 import random
 import math
-from utils import saveObjectsToJsonFile, loadObjectsFromJsonFile
+from utils import saveToJsonFile, loadObjectsFromJsonFile
 
 '''
 Trajectory format, with an example:
@@ -99,7 +99,7 @@ class Trajectory(object):
                 trajectorySequences.append(trajectory)
 
         trajectorySequences = Trajectory.formatInput(trajectorySequences)
-        saveObjectsToJsonFile(trajectorySequences, outputFilename)
+        saveToJsonFile(trajectorySequences, outputFilename)
 
 
 if __name__ == '__main__':
