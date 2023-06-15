@@ -12,32 +12,14 @@ class MRFDataset(Dataset):
         self.datasetPath = datasetPath
         self.tokenizer = AutoTokenizer.from_pretrained(config.BASE_MODEL_NAME)
         self.data = loadObjectsFromJsonFile(self.datasetPath)
-        self.data = MRFDataset.formatInput(self.data)
+        # self.data = MRFDataset.formatInput(self.data)
         self.data = self.transform(self.data)
-
-
 
     def __len__(self):
         return len(self.data)
 
     def __getitem__(self, idx):
         return self.data[idx]
-
-    @staticmethod
-    def formatInput(inputs):
-        formatedInput = []
-        for i, trajectory in enumerate(inputs):
-            dataPoint = {'X': '', 'y': ''}
-            formattedTrajectory = '<header> ' + trajectory['header'] + ' </header>\n'
-            for j, frame in enumerate(trajectory['inputFrames']):
-                formattedTrajectory += f' <frame_{j}> ' + frame + f' </frame_{j}>\n'
-
-            formattedTrajectory += ' <query> ' + trajectory['query'] + ' </query>'
-            dataPoint['X'] = formattedTrajectory
-            dataPoint['y'] = trajectory['prediction']
-            formatedInput.append(dataPoint)
-
-        return formatedInput
 
     def transform(self, rawDataset):
 
