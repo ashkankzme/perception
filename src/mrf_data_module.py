@@ -13,7 +13,7 @@ class MRFDataModule(pl.LightningDataModule):
         self.datasetPath = datasetConfig.DATASET_PATH
         self.maxInputLength = datasetConfig.MAX_INPUT_LENGTH
         self.maxOutputLength = datasetConfig.MAX_OUTPUT_LENGTH
-        self.tokenizer = AutoTokenizer.from_pretrained(datasetConfig.BASE_MODEL_NAME)
+        self.tokenizer = AutoTokenizer.from_pretrained(datasetConfig.BASE_MODEL_NAME, trust_remote_code=True)
 
         self.trainDataLoader = None
         self.valDataLoader = None
