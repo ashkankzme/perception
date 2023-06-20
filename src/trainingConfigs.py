@@ -2,6 +2,7 @@ from types import SimpleNamespace
 
 default = SimpleNamespace(
     BASE_MODEL_NAME="google/flan-t5-small",
+    TRUST_REMOTE_CODE=False,
     BATCH_SIZE=8,
     MAX_INPUT_LENGTH=512,
     MAX_OUTPUT_LENGTH=512,
@@ -13,6 +14,7 @@ default = SimpleNamespace(
 
 tinyDataSmallModel = SimpleNamespace(
     BASE_MODEL_NAME="google/flan-t5-small",
+    TRUST_REMOTE_CODE=False,
     BATCH_SIZE=8,
     MAX_INPUT_LENGTH=512,
     MAX_OUTPUT_LENGTH=512,
@@ -36,6 +38,7 @@ smallDataBigBERT = SimpleNamespace(
 
 bigDataSmallModel = SimpleNamespace(
     BASE_MODEL_NAME="google/flan-t5-small",
+    TRUST_REMOTE_CODE=False,
     BATCH_SIZE=8,
     MAX_INPUT_LENGTH=512,
     MAX_OUTPUT_LENGTH=512,
@@ -47,6 +50,7 @@ bigDataSmallModel = SimpleNamespace(
 
 bigDataMediumModel = SimpleNamespace(
     BASE_MODEL_NAME="google/flan-t5-base",
+    TRUST_REMOTE_CODE=False,
     BATCH_SIZE=8,
     MAX_INPUT_LENGTH=512,
     MAX_OUTPUT_LENGTH=512,
@@ -58,6 +62,7 @@ bigDataMediumModel = SimpleNamespace(
 
 bigDataBigModel = SimpleNamespace(
     BASE_MODEL_NAME="google/flan-t5-large",
+    TRUST_REMOTE_CODE=False,
     BATCH_SIZE=8,
     MAX_INPUT_LENGTH=512,
     MAX_OUTPUT_LENGTH=512,
