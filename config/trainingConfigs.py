@@ -8,7 +8,18 @@ default = SimpleNamespace(
     DATASET_PATH='../data/trajectories/1_initial/',
     SAMPLING_RATE='1000',
     MODEL_PATH='../models/1_initial/',
-    DESCRIPTION="Small Data (100 Sample Trajectories per worker), Small Model (flan-t5-small, 77M Parameters)",
+    DESCRIPTION="Small Data (1000 Sample Trajectories per worker), Small Model (flan-t5-small, 77M Parameters)",
+)
+
+tinyDataSmallModel = SimpleNamespace(
+    BASE_MODEL_NAME="google/flan-t5-small",
+    BATCH_SIZE=8,
+    MAX_INPUT_LENGTH=512,
+    MAX_OUTPUT_LENGTH=512,
+    DATASET_PATH='../data/trajectories/tiny/',
+    SAMPLING_RATE='100',
+    MODEL_PATH='../models/tinyDataSmallModel/',
+    DESCRIPTION="Tiny Data (100 Sample Trajectories per worker), Small Model (flan-t5-small, 77M Parameters)",
 )
 
 bigDataSmallModel = SimpleNamespace(
