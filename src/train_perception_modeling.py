@@ -5,10 +5,8 @@ from mrf_data_module import MRFDataModule
 from mrf_dataset_utility import MRFDatasetUtility as mrfdu
 import time, sys
 
-sys.path.insert(0, '/local2/ashkank/perception/config/')
-# sys.path.insert(0, '/home/ashkank/perception/config/')
-from trainingConfigs import default, bigDataSmallModel, bigDataMediumModel, bigDataBigModel, tinyDataSmallModel, smallDataBigBERT
-
+from trainingConfigs import default, bigDataSmallModel, bigDataMediumModel, bigDataBigModel, tinyDataSmallModel, \
+    smallDataBigBERT
 
 if __name__ == '__main__':
 
@@ -30,7 +28,6 @@ if __name__ == '__main__':
 
     if trainingConfig is None:
         raise Exception("Invalid config name: " + configName)
-
 
     dataGeneration = False
     dataGenFlag = sys.argv[2] if len(sys.argv) > 2 else "notSpecified"
@@ -60,7 +57,6 @@ if __name__ == '__main__':
     mrf = MRFDataModule(trainingConfig)
     mrf.prepare_data()
     model = MisinfoPerceptionT5(trainingConfig, len(mrf.trainDataLoader))
-
 
     trainer = Trainer(accelerator='cuda',
                       strategy='ddp',
