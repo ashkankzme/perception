@@ -22,6 +22,18 @@ tinyDataSmallModel = SimpleNamespace(
     DESCRIPTION="Tiny Data (100 Sample Trajectories per worker), Small Model (flan-t5-small, 77M Parameters)",
 )
 
+smallDataBigBERT = SimpleNamespace(
+    BASE_MODEL_NAME="mosaicml/mosaic-bert-base-seqlen-2048",
+    TRUST_REMOTE_CODE=True,
+    BATCH_SIZE=8,
+    MAX_INPUT_LENGTH=2048,
+    MAX_OUTPUT_LENGTH=2048,
+    DATASET_PATH='../data/trajectories/1_initial/',
+    SAMPLING_RATE='1000',
+    MODEL_PATH='../models/smallDataBigBERT/',
+    DESCRIPTION="Small Data (1000 Sample Trajectories per worker), Small Model (flan-t5-small, 77M Parameters)",
+)
+
 bigDataSmallModel = SimpleNamespace(
     BASE_MODEL_NAME="google/flan-t5-small",
     BATCH_SIZE=8,

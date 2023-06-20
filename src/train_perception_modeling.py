@@ -7,7 +7,7 @@ import time, sys
 
 # sys.path.insert(0, '/local2/ashkank/perception/config/')
 sys.path.insert(0, '/home/ashkank/perception/config/')
-from trainingConfigs import default, bigDataSmallModel, bigDataMediumModel, bigDataBigModel, tinyDataSmallModel
+from trainingConfigs import default, bigDataSmallModel, bigDataMediumModel, bigDataBigModel, tinyDataSmallModel, smallDataBigBERT
 
 
 if __name__ == '__main__':
@@ -25,6 +25,8 @@ if __name__ == '__main__':
         trainingConfig = bigDataBigModel
     elif configName == "tinyDataSmallModel":
         trainingConfig = tinyDataSmallModel
+    elif configName == "smallDataBigBERT":
+        trainingConfig = smallDataBigBERT
 
     if trainingConfig is None:
         raise Exception("Invalid config name: " + configName)
