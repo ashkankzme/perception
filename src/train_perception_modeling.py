@@ -5,8 +5,8 @@ from mrf_data_module import MRFDataModule
 from mrf_dataset_utility import MRFDatasetUtility as mrfdu
 import time, sys
 
-# sys.path.insert(0, '/local2/ashkank/perception/config/')
-sys.path.insert(0, '/home/ashkank/perception/config/')
+sys.path.insert(0, '/local2/ashkank/perception/config/')
+# sys.path.insert(0, '/home/ashkank/perception/config/')
 from trainingConfigs import default, bigDataSmallModel, bigDataMediumModel, bigDataBigModel, tinyDataSmallModel, smallDataBigBERT
 
 
