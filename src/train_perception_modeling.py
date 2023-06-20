@@ -64,6 +64,6 @@ if __name__ == '__main__':
                       # devices=[1, 2, 3],
                       default_root_dir=trainingConfig.MODEL_PATH + "Checkpoints",
                       callbacks=[early_stop_callback, lr_monitor],
-                      accumulate_grad_batches=trainingConfig.BATCH_SIZE,)
+                      accumulate_grad_batches=trainingConfig.BATCH_SIZE//4,)
     trainer.fit(model, datamodule=mrf)
     model.model.save_pretrained(trainingConfig.MODEL_PATH + "trained_model")
