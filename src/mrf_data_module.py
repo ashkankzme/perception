@@ -1,7 +1,7 @@
 import pytorch_lightning as pl
 from torch.utils.data import DataLoader
 from utils import loadObjectsFromJsonFile
-from transformers import T5Tokenizer
+from transformers import AutoTokenizer
 from mrf_dataset import MRFDataset
 
 
@@ -13,7 +13,7 @@ class MRFDataModule(pl.LightningDataModule):
         self.datasetPath = datasetConfig.DATASET_PATH
         self.maxInputLength = datasetConfig.MAX_INPUT_LENGTH
         self.maxOutputLength = datasetConfig.MAX_OUTPUT_LENGTH
-        self.tokenizer = T5Tokenizer.from_pretrained(datasetConfig.BASE_MODEL_NAME)
+        self.tokenizer = AutoTokenizer.from_pretrained(datasetConfig.BASE_MODEL_NAME)
 
         self.trainDataLoader = None
         self.valDataLoader = None
