@@ -16,10 +16,12 @@ class MisinfoPerceptionT5(pl.LightningModule):
         self.hparams.num_train_epochs = num_train_epochs
         self.hparams.warmup_steps = warmup_steps
 
+        trustRemoteCode = True if self.config.TRUST_REMOTE_CODE else False
+
         if not loadLocally:
-            self.model = AutoModelForSeq2SeqLM.from_pretrained(self.config.BASE_MODEL_NAME)
+            self.model = AutoModelForSeq2SeqLM.from_pretrained(self.config.BASE_MODEL_NAME, trust_remote_code=trustRemoteCode)
         else:
-            self.model = AutoModelForSeq2SeqLM.from_pretrained(localModelPath)
+            self.model = AutoModelForSeq2SeqLM.from_pretrained(localModelPath, trust_remote_code=trustRemoteCode)
 
         # todo check whether freezing the params is necessary
         # freeze all layers after a certain depth, as determined by defaultConfig.FROZEN_LAYER_DEPTH_THRESHOLD
