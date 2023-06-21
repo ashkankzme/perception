@@ -11,15 +11,15 @@ class MRFDataset(Dataset):
         self.config = config
         self.datasetPath = datasetPath
         self.tokenizer = AutoTokenizer.from_pretrained(config.BASE_MODEL_NAME)
-        self.data = loadObjectsFromJsonFile(self.datasetPath)
+        self.jsonData = loadObjectsFromJsonFile(self.datasetPath)
         # self.data = MRFDataset.formatInput(self.data)
-        self.data = self.transform(self.data)
+        # self.data = self.transform(self.data)
 
     def __len__(self):
-        return len(self.data)
+        return len(self.jsonData)
 
     def __getitem__(self, idx):
-        return self.data[idx]
+        return self.transform([self.jsonData[idx]])[0]
 
     def transform(self, rawDataset):
 

@@ -55,7 +55,7 @@ if __name__ == '__main__':
     )
     lr_monitor = LearningRateMonitor(logging_interval='step')
     mrf = MRFDataModule(trainingConfig)
-    mrf.prepare_data()
+    # mrf.prepare_data()
     model = MisinfoPerceptionT5(trainingConfig, len(mrf.trainDataLoader))
 
     trainer = Trainer(accelerator='cuda',
@@ -63,7 +63,7 @@ if __name__ == '__main__':
                       devices='auto',
                       # devices=[1, 2, 3],
                       default_root_dir=trainingConfig.MODEL_PATH + "Checkpoints",
-                      callbacks=[early_stop_callback, lr_monitor],
-                      accumulate_grad_batches=trainingConfig.BATCH_SIZE//8,)
+                      callbacks=[early_stop_callback, lr_monitor],)
+                      # accumulate_grad_batches=trainingConfig.BATCH_SIZE//8,)
     trainer.fit(model, datamodule=mrf)
     model.model.save_pretrained(trainingConfig.MODEL_PATH + "trained_model")
