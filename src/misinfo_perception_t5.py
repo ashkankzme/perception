@@ -5,7 +5,7 @@ import pytorch_lightning as pl
 
 
 class MisinfoPerceptionT5(pl.LightningModule):
-    def __init__(self, config, trainSetLength, loadLocally=False, localModelPath=None, lr=5e-5, num_train_epochs=5, warmup_steps=1000):
+    def __init__(self, config, trainSetLength, loadLocally=False, localModelPath=None, lr=5e-5, num_train_epochs=1, warmup_steps=1000):
         super().__init__()
 
         self.config = config
@@ -36,13 +36,13 @@ class MisinfoPerceptionT5(pl.LightningModule):
         # return loss
 
     def training_step(self, batch, batch_idx):
-        return self.common_step(batch, batch_idx)
-        # loss = self.common_step(batch, batch_idx)
+        # return self.common_step(batch, batch_idx)
+        loss = self.common_step(batch, batch_idx)
         # logs metrics for each training_step,
         # and the average across the epoch
-        # self.log("training_loss", loss)
+        self.log("training_loss", loss)
 
-        # return loss
+        return loss
 
 
     def forward(self, input_ids, attention_mask, labels=None): # todo test
@@ -51,11 +51,11 @@ class MisinfoPerceptionT5(pl.LightningModule):
         # return outputs
 
     def validation_step(self, batch, batch_idx):
-        return self.common_step(batch, batch_idx)
-        # loss = self.common_step(batch, batch_idx)
-        # self.log("validation_loss", loss, on_epoch=True)
-        #
-        # return loss
+        # return self.common_step(batch, batch_idx)
+        loss = self.common_step(batch, batch_idx)
+        self.log("validation_loss", loss, on_epoch=True)
+
+        return loss
 
     def test_step(self, batch, batch_idx):
         return self.common_step(batch, batch_idx)
