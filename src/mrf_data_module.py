@@ -76,4 +76,4 @@ class MRFDataModule(pl.LightningDataModule):
     def _wrapInDatasetObj(self, fileName):
         transformedData = MRFDataset(self.datasetPath + fileName, self.config)
         # transformedData.set_format(type='torch', columns=['input_ids', 'attention_mask', 'labels'])
-        return DataLoader(transformedData, batch_size=self.batchSize, shuffle=False, num_workers=4, pin_memory=True)
+        return DataLoader(transformedData, batch_size=self.batchSize, shuffle=False, num_workers=0, pin_memory=True)

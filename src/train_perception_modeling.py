@@ -60,7 +60,7 @@ if __name__ == '__main__':
 
     trainer = Trainer(accelerator='cuda',
                       strategy='ddp_spawn',
-                      devices='auto',
+                      devices=[0,1,2,3],
                       # devices=[1, 2, 3],
                       default_root_dir=trainingConfig.MODEL_PATH + "Checkpoints",
                       callbacks=[early_stop_callback, lr_monitor],)
