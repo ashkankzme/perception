@@ -5,7 +5,7 @@ import pytorch_lightning as pl
 
 
 class MisinfoPerceptionT5(pl.LightningModule):
-    def __init__(self, config, trainSetLength, loadLocally=False, localModelPath=None, lr=5e-5, num_train_epochs=15, warmup_steps=1000):
+    def __init__(self, config, trainSetLength, loadLocally=False, localModelPath=None, lr=5e-5, num_train_epochs=5, warmup_steps=1000):
         super().__init__()
 
         self.config = config
