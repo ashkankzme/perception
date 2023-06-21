@@ -3,7 +3,7 @@ from types import SimpleNamespace
 default = SimpleNamespace(
     BASE_MODEL_NAME="google/flan-t5-small",
     TRUST_REMOTE_CODE=False,
-    BATCH_SIZE=8,
+    BATCH_SIZE=4,
     MAX_INPUT_LENGTH=512,
     MAX_OUTPUT_LENGTH=512,
     DATASET_PATH='../data/trajectories/1_initial/',
