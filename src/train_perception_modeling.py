@@ -59,7 +59,7 @@ if __name__ == '__main__':
     model = MisinfoPerceptionT5(trainingConfig, len(mrf.train_dataloader()))
 
     trainer = Trainer(accelerator='cuda',
-                      strategy='ddp',
+                      strategy='ddp_spawn',
                       devices='auto',
                       # devices=[1, 2, 3],
                       default_root_dir=trainingConfig.MODEL_PATH + "Checkpoints",
