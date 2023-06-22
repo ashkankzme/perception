@@ -2,14 +2,14 @@
 #SBATCH --job-name=misinfo_perception_modeling
 #SBATCH --mail-user=ashkank@umich.edu
 #SBATCH --mail-type=BEGIN,END
-#SBATCH --time=4:00:00
+#SBATCH --time=48:00:00
 #SBATCH --account=mihalcea98
 #SBATCH --cpus-per-task=16
-#SBATCH --gres=gpu:2
+#SBATCH --gres=gpu:4
 #SBATCH --partition=spgpu
 #SBATCH --output=/home/%u/logs/%x-%j.log
 #SBATCH --nodes=1
-#SBATCH --mem-per-cpu=16g
+#SBATCH --mem-per-cpu=20g
 
 
 source /home/ashkank/.bashrc
