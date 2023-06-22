@@ -15,8 +15,6 @@
 source /home/ashkank/.bashrc
 conda activate perceptron
 cd /home/ashkank/perception/src
-python train_perception_modeling.py tinyDataSmallModel load
-#python train_perception_modeling.py default load
-#python train_perception_modeling.py bigDataSmallModel load
-#python train_perception_modeling.py bigDataMediumModel load
-#python train_perception_modeling.py bigDataBigModel load
+python train_perception_modeling.py bigDataMediumModel gen
+python train_perception_modeling.py bigDataMediumModel load
+python train_perception_modeling.py bigDataBigModel load
