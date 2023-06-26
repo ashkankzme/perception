@@ -1,6 +1,5 @@
 from mrf_dataset import MRFDataset
 from misinfo_perception_t5 import MisinfoPerceptionT5
-from mrf_data_module import MRFDataModule
 
 
 import sys
@@ -29,8 +28,9 @@ if __name__ == '__main__':
     if trainingConfig is None:
         raise Exception("Invalid config name: " + configName)
 
-    mrf = MRFDataModule(trainingConfig)
-    model = MisinfoPerceptionT5(trainingConfig, len(mrf.test_dataloader()) // trainingConfig.BATCH_SIZE, loadLocally=True,
+    mrfTestSet = MRFDataset('/local2/ashkank/perception/data/trajectories/big/test_trajectories.json', trainingConfig)
+    testSetJson = mrfTestSet.jsonData
+    model = MisinfoPerceptionT5(trainingConfig, len(testSetJson) // trainingConfig.BATCH_SIZE, loadLocally=True,
                                 localModelPath='/local2/ashkank/perception/trainedModels/bigDataSmallModel/trained_model')
 
     # testDataPoint = [{
@@ -52,8 +52,7 @@ if __name__ == '__main__':
     #
     # testInput = MRFDataset.formatInput(testDataPoint)
 
-    for testInput in mrf.test_dataloader()[:10]:
-
+    for testInput in testSetJson[:10]:
         print(testInput['X'])
         print('--' * 20)
         input_ids = model.tokenizer(testInput['X'], return_tensors='pt').input_ids
