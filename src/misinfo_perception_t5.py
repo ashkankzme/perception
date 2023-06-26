@@ -86,15 +86,36 @@ class MisinfoPerceptionT5(pl.LightningModule):
     #     return self.dm.test_dataloader()
 
 
-    def evaluateOneExample(self, inputText, expectedOutputText):
+    def _evaluateOneExample(self, inputText, expectedOutputText):
         # todo test
         input_ids = self.tokenizer.encode(inputText, return_tensors="pt")
         generated_ids = self.model.generate(input_ids=input_ids, num_beams=4, max_length=5, early_stopping=True)
         generated_text = self.tokenizer.decode(generated_ids[0], skip_special_tokens=True, clean_up_tokenization_spaces=True)
-        perceivedLabel = self.extractPerceivedLabelFromPrediction(generated_text)
+        perceivedLabel = MisinfoPerceptionT5.extractLabel(generated_text)
         return expectedOutputText == perceivedLabel
+        # testSetX = [testInput['X'] for testInput in testSetJson]
+        # testSetY = [testInput['y'] for testInput in testSetJson]
+        # input_ids = tokenizer(testSetX, return_tensors='pt').input_ids
+        # input_ids = input_ids.to(device)
+        # output_ids = model.model.generate(input_ids)
+        #
+        # yPred = []
+        # yTrue = []
+        # for i, y in enumerate(testSetY):
+        #     output = tokenizer.decode(output_ids[i], skip_special_tokens=True)
+        #     predictedLabel = extractLabel(output)
+        #     yPred.append(predictedLabel)
+        #     actualLabel = extractLabel(y)
+        #     yTrue.append(actualLabel)
+        #
+        # for i, y in enumerate(yPred):
+        #     if y == -1:
+        #         yPred[i] = 1 - yTrue[i]  # swaping out the label with the wrong answer, since the output format was corrupt (penalizing in evaluation)
+        #
+        # print(accuracy_score(yTrue, yPred), f1_score(yTrue, yPred, pos_label=0), f1_score(yTrue, yPred, pos_label=1))
 
 
     @staticmethod
-    def extractPerceivedLabelFromPrediction(yPred):
-        return "" # todo implement
+    def _extractLabel(text):
+        return 0 if 'Perceived Label: misinformation' in text else 1 if 'Perceived Label: real news' in text else -1
+        # return 'misinformation' if 'Perceived Label: misinformation' in text else 'real news' if 'Perceived Label: real news' in text else 'unknown'
