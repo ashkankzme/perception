@@ -42,4 +42,4 @@ if __name__ == '__main__':
         output_ids = model.model.generate(input_ids)
         output = tokenizer.decode(output_ids[0], skip_special_tokens=True)
         print(f'predicted: {output}')
-        print(f'actual: {testInput["Y"]}')
+        print(f'actual: {testInput["y"]}')
