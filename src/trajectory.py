@@ -40,6 +40,57 @@ class Trajectory(object):
         return math.factorial(n) / (math.factorial(k) * math.factorial(n - k))
 
     @staticmethod
+    def getAgeGroup(ageCode):
+        if ageCode == "1":
+            return "18-24"
+        elif ageCode == "2":
+            return "25-34"
+        elif ageCode == "3":
+            return "35-44"
+        elif ageCode == "4":
+            return "45-54"
+        elif ageCode == "5":
+            return "55-64"
+        elif ageCode == "6":
+            return "65+"
+        elif ageCode.lower() == "unknown":
+            return "Unknown"
+
+    @staticmethod
+    def getEducationLevel(educationCode):
+        if educationCode == "1":
+            return "Some High School"
+        elif educationCode == "2":
+            return "High School"
+        elif educationCode == "3":
+            return "Some College"
+        elif educationCode == "4":
+            return "Associate's Degree"
+        elif educationCode == "5":
+            return "Bachelor's Degree"
+        elif educationCode == "6":
+            return "Master's Degree"
+        elif educationCode == "7":
+            return "Professional Degree"
+        elif educationCode == "8":
+            return "Doctoral Degree"
+        elif educationCode.lower() == "unknown":
+            return "Unknown"
+
+    @staticmethod
+    def getGender(genderCode):
+        if genderCode == "1":
+            return "Female"
+        elif genderCode == "2":
+            return "Male"
+        elif genderCode == "3":
+            return "Non-Binary"
+        elif genderCode == "4":
+            return "Other"
+        elif genderCode.lower() == "unknown":
+            return "Unknown"
+
+    @staticmethod
     def formatInput(inputs):
         formatedInput = []
         for i, trajectory in enumerate(inputs):
@@ -78,8 +129,8 @@ class Trajectory(object):
 
                 sampledFrames = [
                     'Headline: ' + frame['Input.sentence'] + '\n' +
-                    'Reader\'s Reaction: ' + ", ".join(frame["reaction"]) + '\n' +
-                    'Writer\'s Intent: ' + ", ".join(frame["intent"]) + '\n' +
+                    # 'Reader\'s Reaction: ' + ", ".join(frame["reaction"]) + '\n' +
+                    # 'Writer\'s Intent: ' + ", ".join(frame["intent"]) + '\n' +
                     'Perceived Label: ' + frame["perceivedLabel"] + '\n'
 
                     for frame in sampledFrames
@@ -90,9 +141,9 @@ class Trajectory(object):
                 query = 'Headline: ' + nextFrame['Input.sentence'] + '\n' + \
                         'Perceived Label: ?\n' + 'Reader\'s Reactions: ?\n' + 'Writer\'s Intent: ?\n'
 
-                prediction = 'Perceived Label: ' + nextFrame["perceivedLabel"] + '\n' + \
-                             'Reader\'s Reactions: '+ ", ".join(nextFrame["reaction"]) + '\n' + \
-                             'Writer\'s Intent: ' + ", ".join(nextFrame["intent"]) + '\n'
+                prediction = 'Perceived Label: ' + nextFrame["perceivedLabel"] + '\n' # + \
+                             # 'Reader\'s Reactions: '+ ", ".join(nextFrame["reaction"]) + '\n' + \
+                             # 'Writer\'s Intent: ' + ", ".join(nextFrame["intent"]) + '\n'
 
 
                 trajectory = Trajectory(sampledFrames, workerHeader, query, prediction)

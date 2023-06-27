@@ -6,7 +6,7 @@ from mrf_dataset_utility import MRFDatasetUtility as mrfdu
 import time, sys
 
 from trainingConfigs import default, bigDataSmallModel, bigDataMediumModel, bigDataBigModel, tinyDataSmallModel, \
-    smallDataBigBERT
+    smallDataBigBERT, bigDataSmallModelLabelsOnly
 
 if __name__ == '__main__':
 
@@ -25,6 +25,8 @@ if __name__ == '__main__':
         trainingConfig = tinyDataSmallModel
     elif configName == "smallDataBigBERT":
         trainingConfig = smallDataBigBERT
+    elif configName == "bigDataSmallModelLabelsOnly":
+        trainingConfig = bigDataSmallModelLabelsOnly
 
     if trainingConfig is None:
         raise Exception("Invalid config name: " + configName)
@@ -48,7 +50,7 @@ if __name__ == '__main__':
     # for early stopping, see https://pytorch-lightning.readthedocs.io/en/1.0.0/early_stopping.html?highlight=early%20stopping
     early_stop_callback = EarlyStopping(
         monitor='validation_loss',
-        patience=3,
+        patience=1,
         strict=False,
         verbose=False,
         mode='min'
@@ -60,8 +62,8 @@ if __name__ == '__main__':
 
     trainer = Trainer(accelerator='cuda',
                       strategy='ddp',
-                      devices=[0,1,2,3],
-                      # devices=[1, 2, 3],
+                      # devices=[0,1,2,3],
+                      devices=[2, 3],
                       default_root_dir=trainingConfig.MODEL_PATH + "Checkpoints",
                       callbacks=[early_stop_callback, lr_monitor],)
                       # accumulate_grad_batches=trainingConfig.BATCH_SIZE//8,)

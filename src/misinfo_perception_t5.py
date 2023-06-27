@@ -66,13 +66,13 @@ class MisinfoPerceptionT5(pl.LightningModule):
         # return self.common_step(batch, batch_idx)
         # loss = self.common_step(batch, batch_idx)
         # return loss
-        if self.testSetJson is None:
-            self.testSetJson = loadObjectsFromJsonFile(self.config.DATASET_PATH + 'test_trajectories.json')
+        # if self.testSetJson is None:
+        #     self.testSetJson = loadObjectsFromJsonFile(self.config.DATASET_PATH + 'test_trajectories.json')
 
         input_ids = batch['input_ids']
         attention_mask = batch['attention_mask']
         labels = [dp['y'] for dp in self.testSetJson[batch_idx * self.config.BATCH_SIZE: (batch_idx + 1) * self.config.BATCH_SIZE]]
-        outputs_ids = self.model.generate(input_ids=input_ids, attention_mask=attention_mask, max_length=self.config.MAX_OUTPUT_LENGTH, num_beams=4, early_stopping=True)
+        outputs_ids = self.model.generate(input_ids=input_ids, attention_mask=attention_mask, max_length=self.config.MAX_OUTPUT_LENGTH, num_beams=4)
 
         yPred = []
         yTrue = []
