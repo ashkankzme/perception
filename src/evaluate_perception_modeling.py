@@ -31,7 +31,7 @@ if __name__ == '__main__':
     if trainingConfig is None:
         raise Exception("Invalid config name: " + configName)
 
-    trainingConfig.BATCH_SIZE *= 18
+    trainingConfig.BATCH_SIZE *= 16
     trainingConfig.MODEL_PATH = '/local2/ashkank/perception/trainedModels/bigDataSmallModel/trained_model/'
     trainingConfig.DATASET_PATH = '/local2/ashkank/perception/data/trajectories/big/'
 
