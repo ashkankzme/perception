@@ -1,10 +1,9 @@
 from mrf_data_module import MRFDataModule
 from misinfo_perception_t5 import MisinfoPerceptionT5
-from transformers import AutoTokenizer
 from sklearn.metrics import f1_score, accuracy_score
-from torch.cuda import is_available
+from pytorch_lightning import Trainer
 
-import sys, random
+import sys
 
 from trainingConfigs import default, bigDataSmallModel, bigDataMediumModel, bigDataBigModel, tinyDataSmallModel, \
     smallDataBigBERT
@@ -32,15 +31,17 @@ if __name__ == '__main__':
     if trainingConfig is None:
         raise Exception("Invalid config name: " + configName)
 
-    trainingConfig.BATCH_SIZE *= 25
+    trainingConfig.BATCH_SIZE *= 18
     trainingConfig.MODEL_PATH = '/local2/ashkank/perception/trainedModels/bigDataSmallModel/trained_model/'
     trainingConfig.DATASET_PATH = '/local2/ashkank/perception/data/trajectories/big/'
 
     mrf = MRFDataModule(trainingConfig)
     model = MisinfoPerceptionT5(trainingConfig, len(mrf.test_dataloader()) // trainingConfig.BATCH_SIZE, loadLocally=True, localModelPath=trainingConfig.MODEL_PATH)
-    mrfTestSetJson = mrf.test_dataloader().dataset.jsonData
 
-    device = 'cuda:3' if is_available() else 'cpu'
-    model.model.to(device)
+    trainer = Trainer(accelerator='cuda', devices=[0, 1, 2, 3])
+    # trainer = Trainer(accelerator='cuda', devices=[3])
+    trainer.test(model, datamodule=mrf)
 
-    tokenizer = AutoTokenizer.from_pretrained(trainingConfig.BASE_MODEL_NAME)
+    yPred, yTrue = model.reduceTestResults()
+
+    print(accuracy_score(yTrue, yPred), f1_score(yTrue, yPred, pos_label=0), f1_score(yTrue, yPred, pos_label=1))

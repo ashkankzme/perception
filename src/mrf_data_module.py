@@ -31,10 +31,11 @@ class MRFDataModule(pl.LightningDataModule):
         # self.valData = self.formatData(self.valData)
         # self.testData = loadObjectsFromJsonFile(self.datasetPath + "test_trajectories.json")
         # self.testData = self.formatData(self.testData)
-        if not self.trainDataLoader:
-            self.trainDataLoader = self._wrapInDatasetObj("train_trajectories.json")
-        if not self.valDataLoader:
-            self.valDataLoader = self._wrapInDatasetObj("eval_trajectories.json")
+
+        # if not self.trainDataLoader:
+        #     self.trainDataLoader = self._wrapInDatasetObj("train_trajectories.json")
+        # if not self.valDataLoader:
+        #     self.valDataLoader = self._wrapInDatasetObj("eval_trajectories.json")
         if not self.testDataLoader:
             self.testDataLoader = self._wrapInDatasetObj("test_trajectories.json")
 

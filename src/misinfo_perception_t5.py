@@ -1,7 +1,6 @@
-import torch
-import torch.nn as nn
-from transformers import AdamW, get_linear_schedule_with_warmup, AutoModelForSeq2SeqLM
+from transformers import AdamW, get_linear_schedule_with_warmup, AutoModelForSeq2SeqLM, AutoTokenizer
 import pytorch_lightning as pl
+from utils import loadObjectsFromJsonFile
 
 
 class MisinfoPerceptionT5(pl.LightningModule):
@@ -10,8 +9,8 @@ class MisinfoPerceptionT5(pl.LightningModule):
 
         self.config = config
         self.trainSetLength = trainSetLength
-        # self.tokenizer = T5Tokenizer.from_pretrained(self.config.BASE_MODEL_NAME)
-        # todo set training config
+        self.tokenizer = AutoTokenizer.from_pretrained(self.config.BASE_MODEL_NAME)
+
         self.hparams.lr = lr
         self.hparams.num_train_epochs = num_train_epochs
         self.hparams.warmup_steps = warmup_steps
@@ -23,10 +22,8 @@ class MisinfoPerceptionT5(pl.LightningModule):
         else:
             self.model = AutoModelForSeq2SeqLM.from_pretrained(localModelPath, trust_remote_code=trustRemoteCode)
 
-        # todo check whether freezing the params is necessary
-        # freeze all layers after a certain depth, as determined by defaultConfig.FROZEN_LAYER_DEPTH_THRESHOLD
-        # for param in self.model.parameters()[:defaultConfig.FROZEN_LAYER_DEPTH_THRESHOLD]:
-        #     param.requires_grad = False
+        self.testResults = []
+        self.testSetJson = None
 
     def common_step(self, batch, batch_idx):
         outputs = self(**batch)
@@ -57,10 +54,49 @@ class MisinfoPerceptionT5(pl.LightningModule):
 
         return loss
 
+    def reduceTestResults(self):
+        yPred, yTrue = [], []
+        for result in self.testResults:
+            yPred.extend(result['yPred'])
+            yTrue.extend(result['yTrue'])
+
+        return yPred, yTrue
+
     def test_step(self, batch, batch_idx):
-        return self.common_step(batch, batch_idx)
+        # return self.common_step(batch, batch_idx)
         # loss = self.common_step(batch, batch_idx)
         # return loss
+        if self.testSetJson is None:
+            self.testSetJson = loadObjectsFromJsonFile(self.config.DATASET_PATH + 'test_trajectories.json')
+
+        input_ids = batch['input_ids']
+        attention_mask = batch['attention_mask']
+        labels = [dp['y'] for dp in self.testSetJson[batch_idx * self.config.BATCH_SIZE: (batch_idx + 1) * self.config.BATCH_SIZE]]
+        outputs_ids = self.model.generate(input_ids=input_ids, attention_mask=attention_mask, max_length=self.config.MAX_OUTPUT_LENGTH, num_beams=4, early_stopping=True)
+
+        yPred = []
+        yTrue = []
+
+        for i, output_ids in enumerate(outputs_ids):
+            output = self.tokenizer.decode(output_ids, max_length=self.config.MAX_OUTPUT_LENGTH, padding="max_length", truncation=True)
+            gTruth = labels[i]
+            predictedLabel = MisinfoPerceptionT5._extractLabel(output)
+            yPred.append(predictedLabel)
+            actualLabel = MisinfoPerceptionT5._extractLabel(gTruth)
+            yTrue.append(actualLabel)
+
+        for i, y in enumerate(yPred):
+            if y == -1:
+                yPred[i] = 1 - yTrue[i]  # swaping out the label with the wrong answer, since the output format was corrupt (penalizing in evaluation)
+
+        self.testResults.append({'yPred': yPred, 'yTrue': yTrue})
+
+
+    @staticmethod
+    def _extractLabel(text):
+        return 0 if 'Perceived Label: misinformation' in text else 1 if 'Perceived Label: real news' in text else -1
+        # return 'misinformation' if 'Perceived Label: misinformation' in text else 'real news' if 'Perceived Label: real news' in text else 'unknown'
+
 
     def configure_optimizers(self):
         # create optimizer
@@ -75,47 +111,3 @@ class MisinfoPerceptionT5(pl.LightningModule):
                         'frequency': 1}
 
         return {"optimizer": optimizer, "lr_scheduler": lr_scheduler}
-
-    # def train_dataloader(self):
-    #     return self.dm.train_dataloader()
-    #
-    # def val_dataloader(self):
-    #     return self.dm.val_dataloader()
-    #
-    # def test_dataloader(self):
-    #     return self.dm.test_dataloader()
-
-
-    def _evaluateOneExample(self, inputText, expectedOutputText):
-        # todo test
-        input_ids = self.tokenizer.encode(inputText, return_tensors="pt")
-        generated_ids = self.model.generate(input_ids=input_ids, num_beams=4, max_length=5, early_stopping=True)
-        generated_text = self.tokenizer.decode(generated_ids[0], skip_special_tokens=True, clean_up_tokenization_spaces=True)
-        perceivedLabel = MisinfoPerceptionT5.extractLabel(generated_text)
-        return expectedOutputText == perceivedLabel
-        # testSetX = [testInput['X'] for testInput in testSetJson]
-        # testSetY = [testInput['y'] for testInput in testSetJson]
-        # input_ids = tokenizer(testSetX, return_tensors='pt').input_ids
-        # input_ids = input_ids.to(device)
-        # output_ids = model.model.generate(input_ids)
-        #
-        # yPred = []
-        # yTrue = []
-        # for i, y in enumerate(testSetY):
-        #     output = tokenizer.decode(output_ids[i], skip_special_tokens=True)
-        #     predictedLabel = extractLabel(output)
-        #     yPred.append(predictedLabel)
-        #     actualLabel = extractLabel(y)
-        #     yTrue.append(actualLabel)
-        #
-        # for i, y in enumerate(yPred):
-        #     if y == -1:
-        #         yPred[i] = 1 - yTrue[i]  # swaping out the label with the wrong answer, since the output format was corrupt (penalizing in evaluation)
-        #
-        # print(accuracy_score(yTrue, yPred), f1_score(yTrue, yPred, pos_label=0), f1_score(yTrue, yPred, pos_label=1))
-
-
-    @staticmethod
-    def _extractLabel(text):
-        return 0 if 'Perceived Label: misinformation' in text else 1 if 'Perceived Label: real news' in text else -1
-        # return 'misinformation' if 'Perceived Label: misinformation' in text else 'real news' if 'Perceived Label: real news' in text else 'unknown'
