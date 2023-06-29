@@ -157,7 +157,7 @@ class Trajectory(object):
         saveToJsonFile(trajectorySequences, outputFilename)
 
     @staticmethod
-    def generateTrajectorySequencesFromMRFDataset(workers, trajectoryWindowSize, outputFilename):
+    def generateTrajectorySequencesFromMRFDataset(workers, trajectoryWindowSize, outputFilename, labelsOnly=False):
         random.seed(1372)
         trajectorySequences = []
         for worker in workers:
@@ -177,8 +177,8 @@ class Trajectory(object):
 
                 sampledFrames = [
                     'Headline: ' + frame['Input.sentence'] + '\n' +
-                    # 'Reader\'s Reaction: ' + ", ".join(frame["reaction"]) + '\n' +
-                    # 'Writer\'s Intent: ' + ", ".join(frame["intent"]) + '\n' +
+                    '' if labelsOnly else 'Reader\'s Reaction: ' + ", ".join(frame["reaction"]) + '\n' +
+                    '' if labelsOnly else 'Writer\'s Intent: ' + ", ".join(frame["intent"]) + '\n' +
                     'Perceived Label: ' + frame["perceivedLabel"] + '\n'
 
                     for frame in sampledFrames
@@ -187,11 +187,13 @@ class Trajectory(object):
                 nextFrame = worker['annotatedFrames'][pivotIndex + K]
 
                 query = 'Headline: ' + nextFrame['Input.sentence'] + '\n' + \
-                        'Perceived Label: ?\n' # + 'Reader\'s Reactions: ?\n' + 'Writer\'s Intent: ?\n'
+                        'Perceived Label: ?\n' + \
+                        '' if labelsOnly else 'Reader\'s Reactions: ?\n' + \
+                        '' if labelsOnly else 'Writer\'s Intent: ?\n'
 
-                prediction = 'Perceived Label: ' + nextFrame["perceivedLabel"] + '\n'  # + \
-                # 'Reader\'s Reactions: '+ ", ".join(nextFrame["reaction"]) + '\n' + \
-                # 'Writer\'s Intent: ' + ", ".join(nextFrame["intent"]) + '\n'
+                prediction = 'Perceived Label: ' + nextFrame["perceivedLabel"] + '\n' + \
+                '' if labelsOnly else 'Reader\'s Reactions: '+ ", ".join(nextFrame["reaction"]) + '\n' + \
+                '' if labelsOnly else 'Writer\'s Intent: ' + ", ".join(nextFrame["intent"]) + '\n'
 
                 trajectory = Trajectory(sampledFrames, workerHeader, query, prediction)
                 trajectorySequences.append(trajectory)
@@ -205,15 +207,15 @@ class Trajectory(object):
         saveToJsonFile(trajectorySequences, outputFilename)
 
 
-if __name__ == '__main__':
-    outputPath = '../data/trajectories/bigrui/'
-    workers = loadObjectsFromJsonFile('../data/mrf_turk_processed.json')
-    # workers = sorted(workers, key=lambda x: len(x['annotatedFrames']), reverse=True)
-    workers = [worker for worker in workers if
-               len(worker['annotatedFrames']) >= 20]  # throwing out workers with less than 10 annotated frames
-    random.seed(1372)
-    random.shuffle(workers)
-    trainTestCutOffIndex = int(len(workers) * 0.9)
-    trainWorkers, testWorkers = workers[:trainTestCutOffIndex], workers[trainTestCutOffIndex:]
-    Trajectory.generateTrajectorySequencesFromMRFDataset(trainWorkers, {'min': 4, 'max': 8}, outputPath + 'train_trajectories.json')
-    Trajectory.generateTrajectorySequencesFromMRFDataset(testWorkers, {'min': 4, 'max': 8}, outputPath + 'test_trajectories.json')
+# if __name__ == '__main__':
+#     outputPath = '../data/trajectories/bigrui/'
+#     workers = loadObjectsFromJsonFile('../data/mrf_turk_processed.json')
+#     # workers = sorted(workers, key=lambda x: len(x['annotatedFrames']), reverse=True)
+#     workers = [worker for worker in workers if
+#                len(worker['annotatedFrames']) >= 20]  # throwing out workers with less than 10 annotated frames
+#     random.seed(1372)
+#     random.shuffle(workers)
+#     trainTestCutOffIndex = int(len(workers) * 0.9)
+#     trainWorkers, testWorkers = workers[:trainTestCutOffIndex], workers[trainTestCutOffIndex:]
+#     Trajectory.generateTrajectorySequencesFromMRFDataset(trainWorkers, {'min': 4, 'max': 8}, outputPath + 'train_trajectories.json')
+#     Trajectory.generateTrajectorySequencesFromMRFDataset(testWorkers, {'min': 4, 'max': 8}, outputPath + 'test_trajectories.json')

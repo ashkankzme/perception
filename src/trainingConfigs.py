@@ -55,6 +55,7 @@ bigDataSmallModelLabelsOnly = SimpleNamespace(
     MAX_INPUT_LENGTH=512,
     MAX_OUTPUT_LENGTH=512,
     DATASET_PATH='../data/trajectories/biglabelsonly/',
+    LABELS_ONLY=True,
     MODEL_PATH='../trainedModels/bigDataSmallModelLabelsOnly/',
     SAMPLING_RATE=10000,
     DESCRIPTION="Big Data (10000 Sample Trajectories per worker) including only perception labels, Small Model (flan-t5-small, 77M Parameters)",

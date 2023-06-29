@@ -36,8 +36,9 @@ class MRFDataModule(pl.LightningDataModule):
         #     self.trainDataLoader = self._wrapInDatasetObj("train_trajectories.json")
         # if not self.valDataLoader:
         #     self.valDataLoader = self._wrapInDatasetObj("eval_trajectories.json")
-        if not self.testDataLoader:
-            self.testDataLoader = self._wrapInDatasetObj("test_trajectories.json")
+        # if not self.testDataLoader:
+        #     self.testDataLoader = self._wrapInDatasetObj("test_trajectories.json")
+        pass
 
 
     def setup(self, stage='test'):

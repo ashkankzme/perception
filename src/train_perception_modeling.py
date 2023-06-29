@@ -41,8 +41,9 @@ if __name__ == '__main__':
         print("Invalid or empty data generation flag: " + dataGenFlag)
 
     if dataGeneration:
+        labelsOnly = trainingConfig.LABELS_ONLY if hasattr(trainingConfig, "LABELS_ONLY") else False
         # generates trajectories for training, validation and testing
-        mrfdu.generateTrajectoriesFromMRFDataset(trainingConfig.DATASET_PATH)
+        mrfdu.generateTrajectoriesFromMRFDataset(trainingConfig.DATASET_PATH, labelsOnly=labelsOnly)
         # wait for i/o to finish
         time.sleep(60)
 
