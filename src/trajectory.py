@@ -157,7 +157,7 @@ class Trajectory(object):
         saveToJsonFile(trajectorySequences, outputFilename)
 
     @staticmethod
-    def generateTrajectorySequencesFromMRFDataset(workers, trajectoryWindowSize, sampleSizePerWorker, outputFilename):
+    def generateTrajectorySequencesFromMRFDataset(workers, trajectoryWindowSize, outputFilename):
         random.seed(1372)
         trajectorySequences = []
         for worker in workers:
@@ -213,10 +213,7 @@ if __name__ == '__main__':
                len(worker['annotatedFrames']) >= 20]  # throwing out workers with less than 10 annotated frames
     random.seed(1372)
     random.shuffle(workers)
-    samplingRate = 100000
     trainTestCutOffIndex = int(len(workers) * 0.9)
     trainWorkers, testWorkers = workers[:trainTestCutOffIndex], workers[trainTestCutOffIndex:]
-    Trajectory.generateTrajectorySequencesFromMRFDataset(trainWorkers, {'min': 4, 'max': 8}, samplingRate,
-                                                         outputPath + 'train_trajectories.json')
-    Trajectory.generateTrajectorySequencesFromMRFDataset(testWorkers, {'min': 4, 'max': 8}, samplingRate,
-                                                         outputPath + 'test_trajectories.json')
+    Trajectory.generateTrajectorySequencesFromMRFDataset(trainWorkers, {'min': 4, 'max': 8}, outputPath + 'train_trajectories.json')
+    Trajectory.generateTrajectorySequencesFromMRFDataset(testWorkers, {'min': 4, 'max': 8}, outputPath + 'test_trajectories.json')

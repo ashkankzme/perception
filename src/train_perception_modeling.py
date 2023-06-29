@@ -42,7 +42,7 @@ if __name__ == '__main__':
 
     if dataGeneration:
         # generates trajectories for training, validation and testing
-        mrfdu.generateTrajectoriesFromMRFDataset(int(trainingConfig.SAMPLING_RATE), trainingConfig.DATASET_PATH)
+        mrfdu.generateTrajectoriesFromMRFDataset(trainingConfig.DATASET_PATH)
         # wait for i/o to finish
         time.sleep(60)
 
