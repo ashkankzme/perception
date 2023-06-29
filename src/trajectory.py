@@ -170,7 +170,7 @@ class Trajectory(object):
                 worker['mediaConsumptionRegimen'] if len(worker['mediaConsumptionRegimen']) else ['unknown']) + '\n'
 
             pivotIndex = 0
-            while pivotIndex < len(worker['annotatedFrames']) - trajectoryWindowSize['min']:
+            while pivotIndex < len(worker['annotatedFrames']) - trajectoryWindowSize['max']:
                 K = random.randint(trajectoryWindowSize['min'], trajectoryWindowSize['max'])
 
                 sampledFrames = worker['annotatedFrames'][pivotIndex: pivotIndex + K]
