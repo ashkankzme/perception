@@ -24,6 +24,8 @@ perceptions: [
 current headline: 'headline1'
 what is the perceived label?
 '''
+
+
 # the trajectories contain three parts; header -- trajectories -- question
 
 
@@ -33,7 +35,6 @@ class Trajectory(object):
         self.header = header
         self.query = query
         self.prediction = prediction
-
 
     @staticmethod
     def choiceOf(k, n):
@@ -95,11 +96,12 @@ class Trajectory(object):
         formatedInput = []
         for i, trajectory in enumerate(inputs):
             dataPoint = {'X': '', 'y': ''}
-            formattedTrajectory = '<header> ' + trajectory.header + ' </header>\n'
+            formattedTrajectory = ''
+            formattedTrajectory += '<query>' + trajectory.query + '</query>'
+            formattedTrajectory += '<header>' + trajectory.header + '</header>\n'
             for j, frame in enumerate(trajectory.inputFrames):
-                formattedTrajectory += f' <frame_{j}> ' + frame + f' </frame_{j}>\n'
+                formattedTrajectory += f'<frame_{j}>' + frame + f'</frame_{j}>\n'
 
-            formattedTrajectory += ' <query> ' + trajectory.query + ' </query>'
             dataPoint['X'] = formattedTrajectory
             dataPoint['y'] = trajectory.prediction
             formatedInput.append(dataPoint)
@@ -107,7 +109,8 @@ class Trajectory(object):
         return formatedInput
 
     @staticmethod
-    def generateTrajectorySequencesFromMRFDataset(workers, trajectoryWindowSize, sampleSizePerWorker, outputFilename):
+    #@deprecated
+    def _generateTrajectorySequencesFromMRFDataset(workers, trajectoryWindowSize, sampleSizePerWorker, outputFilename):
         random.seed(1372)
         trajectorySequences = []
         for worker in workers:
@@ -116,11 +119,13 @@ class Trajectory(object):
                            'Gender: ' + str(worker['gender']) + '\n' + \
                            'Education: ' + str(worker['education']) + '\n' + \
                            "Race: " + ", ".join(worker['race'] if len(worker['race']) else ['unknown']) + '\n' + \
-                           "Media Diet: " + ", ".join(worker['mediaConsumptionRegimen'] if len(worker['mediaConsumptionRegimen']) else ['unknown']) + '\n'
+                           "Media Diet: " + ", ".join(
+                worker['mediaConsumptionRegimen'] if len(worker['mediaConsumptionRegimen']) else ['unknown']) + '\n'
 
             maxPossibleTrajectories = Trajectory.choiceOf(trajectoryWindowSize['max'], len(worker['annotatedFrames']))
             maxPossibleTrajectories = int(maxPossibleTrajectories)
-            workerSampleSize = min(sampleSizePerWorker, maxPossibleTrajectories) # todo: this is a hacky way to limit the number of trajectories per worker
+            workerSampleSize = min(sampleSizePerWorker,
+                                   maxPossibleTrajectories)  # todo: this is a hacky way to limit the number of trajectories per worker
             for i in range(workerSampleSize):
                 K = random.randint(trajectoryWindowSize['min'], trajectoryWindowSize['max'])
                 sampledIndices = random.sample(range(len(worker['annotatedFrames'])), K + 1)
@@ -141,13 +146,60 @@ class Trajectory(object):
                 query = 'Headline: ' + nextFrame['Input.sentence'] + '\n' + \
                         'Perceived Label: ?\n' + 'Reader\'s Reactions: ?\n' + 'Writer\'s Intent: ?\n'
 
-                prediction = 'Perceived Label: ' + nextFrame["perceivedLabel"] + '\n' # + \
-                             # 'Reader\'s Reactions: '+ ", ".join(nextFrame["reaction"]) + '\n' + \
-                             # 'Writer\'s Intent: ' + ", ".join(nextFrame["intent"]) + '\n'
-
+                prediction = 'Perceived Label: ' + nextFrame["perceivedLabel"] + '\n'  # + \
+                # 'Reader\'s Reactions: '+ ", ".join(nextFrame["reaction"]) + '\n' + \
+                # 'Writer\'s Intent: ' + ", ".join(nextFrame["intent"]) + '\n'
 
                 trajectory = Trajectory(sampledFrames, workerHeader, query, prediction)
                 trajectorySequences.append(trajectory)
+
+        trajectorySequences = Trajectory.formatInput(trajectorySequences)
+        saveToJsonFile(trajectorySequences, outputFilename)
+
+    @staticmethod
+    def generateTrajectorySequencesFromMRFDataset(workers, trajectoryWindowSize, sampleSizePerWorker, outputFilename):
+        random.seed(1372)
+        trajectorySequences = []
+        for worker in workers:
+            workerHeader = 'Worker ID: ' + worker['id'] + '\n' + \
+                           'Age: ' + Trajectory.getAgeGroup(str(worker['age'])) + '\n' + \
+                           'Gender: ' + Trajectory.getGender(str(worker['gender'])) + '\n' + \
+                           'Education: ' + Trajectory.getEducationLevel(str(worker['education'])) + '\n' + \
+                           "Race: " + ", ".join(worker['race'] if len(worker['race']) else ['unknown']) + '\n' + \
+                           "Media Diet: " + ", ".join(
+                worker['mediaConsumptionRegimen'] if len(worker['mediaConsumptionRegimen']) else ['unknown']) + '\n'
+
+            pivotIndex = 0
+            while pivotIndex < len(worker['annotatedFrames']) - trajectoryWindowSize['min']:
+                K = random.randint(trajectoryWindowSize['min'], trajectoryWindowSize['max'])
+
+                sampledFrames = worker['annotatedFrames'][pivotIndex: pivotIndex + K]
+
+                sampledFrames = [
+                    'Headline: ' + frame['Input.sentence'] + '\n' +
+                    # 'Reader\'s Reaction: ' + ", ".join(frame["reaction"]) + '\n' +
+                    # 'Writer\'s Intent: ' + ", ".join(frame["intent"]) + '\n' +
+                    'Perceived Label: ' + frame["perceivedLabel"] + '\n'
+
+                    for frame in sampledFrames
+                ]
+
+                nextFrame = worker['annotatedFrames'][pivotIndex + K]
+
+                query = 'Headline: ' + nextFrame['Input.sentence'] + '\n' + \
+                        'Perceived Label: ?\n' # + 'Reader\'s Reactions: ?\n' + 'Writer\'s Intent: ?\n'
+
+                prediction = 'Perceived Label: ' + nextFrame["perceivedLabel"] + '\n'  # + \
+                # 'Reader\'s Reactions: '+ ", ".join(nextFrame["reaction"]) + '\n' + \
+                # 'Writer\'s Intent: ' + ", ".join(nextFrame["intent"]) + '\n'
+
+                trajectory = Trajectory(sampledFrames, workerHeader, query, prediction)
+                trajectorySequences.append(trajectory)
+
+                # advancing pivotIndex by K + 1
+                # +1 is to prevent leakage in training data,
+                # we need to skip the next frame which contains the label for a training sample)
+                pivotIndex += K + 1
 
         trajectorySequences = Trajectory.formatInput(trajectorySequences)
         saveToJsonFile(trajectorySequences, outputFilename)
@@ -164,5 +216,7 @@ if __name__ == '__main__':
     samplingRate = 100000
     trainTestCutOffIndex = int(len(workers) * 0.9)
     trainWorkers, testWorkers = workers[:trainTestCutOffIndex], workers[trainTestCutOffIndex:]
-    Trajectory.generateTrajectorySequencesFromMRFDataset(trainWorkers, {'min': 4, 'max': 8}, samplingRate, outputPath + 'train_trajectories.json')
-    Trajectory.generateTrajectorySequencesFromMRFDataset(testWorkers, {'min': 4, 'max': 8}, samplingRate, outputPath + 'test_trajectories.json')
+    Trajectory.generateTrajectorySequencesFromMRFDataset(trainWorkers, {'min': 4, 'max': 8}, samplingRate,
+                                                         outputPath + 'train_trajectories.json')
+    Trajectory.generateTrajectorySequencesFromMRFDataset(testWorkers, {'min': 4, 'max': 8}, samplingRate,
+                                                         outputPath + 'test_trajectories.json')
