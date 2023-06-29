@@ -38,7 +38,7 @@ if __name__ == '__main__':
     # trainingConfig.DATASET_PATH = '/local2/ashkank/perception/data/trajectories/biglabelsonly/'
 
     mrf = MRFDataModule(trainingConfig)
-    model = MisinfoPerceptionT5(trainingConfig, len(mrf.test_dataloader()) // trainingConfig.BATCH_SIZE, loadLocally=True, localModelPath=trainingConfig.MODEL_PATH)
+    model = MisinfoPerceptionT5(trainingConfig, len(mrf.test_dataloader()) // trainingConfig.BATCH_SIZE, loadLocally=True, localModelPath=trainingConfig.MODEL_PATH + 'trained_model/')
     model.testSetJson = mrf.test_dataloader().dataset.jsonData
 
     trainer = Trainer(accelerator='cuda', devices=[2, 3])
