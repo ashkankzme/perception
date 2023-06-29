@@ -6,7 +6,7 @@ from pytorch_lightning import Trainer
 import sys
 
 from trainingConfigs import default, bigDataSmallModel, bigDataMediumModel, bigDataBigModel, tinyDataSmallModel, \
-    smallDataBigBERT
+    smallDataBigBERT, bigDataSmallModelLabelsOnly
 
 
 
@@ -27,13 +27,15 @@ if __name__ == '__main__':
         trainingConfig = tinyDataSmallModel
     elif configName == "smallDataBigBERT":
         trainingConfig = smallDataBigBERT
+    elif configName == "bigDataSmallModelLabelsOnly":
+        trainingConfig = bigDataSmallModelLabelsOnly
 
     if trainingConfig is None:
         raise Exception("Invalid config name: " + configName)
 
     trainingConfig.BATCH_SIZE *= 8
-    trainingConfig.MODEL_PATH = '/local2/ashkank/perception/trainedModels/bigDataSmallModel/trained_model/'
-    trainingConfig.DATASET_PATH = '/local2/ashkank/perception/data/trajectories/big/'
+    trainingConfig.MODEL_PATH = '/local2/ashkank/perception/trainedModels/bigDataSmallModelLabelsOnly/trained_model/'
+    trainingConfig.DATASET_PATH = '/local2/ashkank/perception/data/trajectories/biglabelsonly/'
 
     mrf = MRFDataModule(trainingConfig)
     model = MisinfoPerceptionT5(trainingConfig, len(mrf.test_dataloader()) // trainingConfig.BATCH_SIZE, loadLocally=True, localModelPath=trainingConfig.MODEL_PATH)

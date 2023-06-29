@@ -94,7 +94,7 @@ class MisinfoPerceptionT5(pl.LightningModule):
 
     @staticmethod
     def _extractLabel(text):
-        return 0 if 'Perceived Label: misinformation' in text else 1 if 'Perceived Label: real news' in text else -1
+        return 0 if 'misinfo' in text.lower() else 1 if 'real' in text.lower() else -1
         # return 'misinformation' if 'Perceived Label: misinformation' in text else 'real news' if 'Perceived Label: real news' in text else 'unknown'
 
 
