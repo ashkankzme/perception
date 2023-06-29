@@ -78,12 +78,19 @@ class MisinfoPerceptionT5(pl.LightningModule):
         yTrue = []
 
         for i, output_ids in enumerate(outputs_ids):
-            output = self.tokenizer.decode(output_ids, max_length=self.config.MAX_OUTPUT_LENGTH, padding="max_length", truncation=True)
+
             gTruth = labels[i]
+
+            actualLabel = MisinfoPerceptionT5._extractLabel(gTruth)
+            if actualLabel not in [0, 1]: # if ground truth is malformed, then skip
+                print('actual label not found: ', gTruth)
+                continue
+
+            yTrue.append(actualLabel)
+
+            output = self.tokenizer.decode(output_ids, max_length=self.config.MAX_OUTPUT_LENGTH, padding="max_length", truncation=True)
             predictedLabel = MisinfoPerceptionT5._extractLabel(output)
             yPred.append(predictedLabel)
-            actualLabel = MisinfoPerceptionT5._extractLabel(gTruth)
-            yTrue.append(actualLabel)
 
         for i, y in enumerate(yPred):
             if y == -1:
@@ -94,7 +101,7 @@ class MisinfoPerceptionT5(pl.LightningModule):
 
     @staticmethod
     def _extractLabel(text):
-        return 0 if 'misinfo' in text.lower() else 1 if 'real' in text.lower() else -1
+        return 0 if 'misinfo' in text.lower() else 1 if 'real news' in text.lower() else -1
         # return 'misinformation' if 'Perceived Label: misinformation' in text else 'real news' if 'Perceived Label: real news' in text else 'unknown'
 
 

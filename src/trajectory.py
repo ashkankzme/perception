@@ -176,10 +176,9 @@ class Trajectory(object):
                 sampledFrames = worker['annotatedFrames'][pivotIndex: pivotIndex + K]
 
                 sampledFrames = [
-                    'Headline: ' + frame['Input.sentence'] + '\n' +
-                    '' if labelsOnly else 'Reader\'s Reaction: ' + ", ".join(frame["reaction"]) + '\n' +
-                    '' if labelsOnly else 'Writer\'s Intent: ' + ", ".join(frame["intent"]) + '\n' +
-                    'Perceived Label: ' + frame["perceivedLabel"] + '\n'
+                    'Headline: ' + frame['Input.sentence'] + '\n' + 'Perceived Label: ' + frame["perceivedLabel"] + '\n' +
+                    ('' if labelsOnly else 'Reader\'s Reaction: ' + ", ".join(frame["reaction"]) + '\n') +
+                    ('' if labelsOnly else 'Writer\'s Intent: ' + ", ".join(frame["intent"]) + '\n')
 
                     for frame in sampledFrames
                 ]
@@ -188,12 +187,12 @@ class Trajectory(object):
 
                 query = 'Headline: ' + nextFrame['Input.sentence'] + '\n' + \
                         'Perceived Label: ?\n' + \
-                        '' if labelsOnly else 'Reader\'s Reactions: ?\n' + \
-                        '' if labelsOnly else 'Writer\'s Intent: ?\n'
+                        ('' if labelsOnly else 'Reader\'s Reactions: ?\n') + \
+                        ('' if labelsOnly else 'Writer\'s Intent: ?\n')
 
                 prediction = 'Perceived Label: ' + nextFrame["perceivedLabel"] + '\n' + \
-                '' if labelsOnly else 'Reader\'s Reactions: '+ ", ".join(nextFrame["reaction"]) + '\n' + \
-                '' if labelsOnly else 'Writer\'s Intent: ' + ", ".join(nextFrame["intent"]) + '\n'
+                             ('' if labelsOnly else 'Reader\'s Reactions: '+ ", ".join(nextFrame["reaction"]) + '\n') + \
+                             ('' if labelsOnly else 'Writer\'s Intent: ' + ", ".join(nextFrame["intent"]) + '\n')
 
                 trajectory = Trajectory(sampledFrames, workerHeader, query, prediction)
                 trajectorySequences.append(trajectory)

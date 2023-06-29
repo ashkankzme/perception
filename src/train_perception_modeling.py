@@ -51,7 +51,7 @@ if __name__ == '__main__':
     # for early stopping, see https://pytorch-lightning.readthedocs.io/en/1.0.0/early_stopping.html?highlight=early%20stopping
     early_stop_callback = EarlyStopping(
         monitor='validation_loss',
-        patience=1,
+        patience=3,
         strict=False,
         verbose=False,
         mode='min'
