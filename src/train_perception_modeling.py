@@ -6,7 +6,7 @@ from mrf_dataset_utility import MRFDatasetUtility as mrfdu
 import time, sys
 
 from trainingConfigs import default, bigDataSmallModel, bigDataMediumModel, bigDataBigModel, tinyDataSmallModel, \
-    smallDataBigBERT, bigDataSmallModelLabelsOnly
+    smallDataBigBERT, bigDataSmallModelLabelsOnly, bigDataMediumModelLabelsOnly
 
 if __name__ == '__main__':
 
@@ -27,6 +27,8 @@ if __name__ == '__main__':
         trainingConfig = smallDataBigBERT
     elif configName == "bigDataSmallModelLabelsOnly":
         trainingConfig = bigDataSmallModelLabelsOnly
+    elif configName == "bigDataMediumModelLabelsOnly":
+        trainingConfig = bigDataMediumModelLabelsOnly
 
     if trainingConfig is None:
         raise Exception("Invalid config name: " + configName)

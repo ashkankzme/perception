@@ -61,6 +61,19 @@ bigDataSmallModelLabelsOnly = SimpleNamespace(
     DESCRIPTION="Big Data (10000 Sample Trajectories per worker) including only perception labels, Small Model (flan-t5-small, 77M Parameters)",
 )
 
+bigDataMediumModelLabelsOnly = SimpleNamespace(
+    BASE_MODEL_NAME="google/flan-t5-base",
+    TRUST_REMOTE_CODE=False,
+    BATCH_SIZE=2,
+    MAX_INPUT_LENGTH=512,
+    MAX_OUTPUT_LENGTH=512,
+    DATASET_PATH='../data/trajectories/biglabelsonly/',
+    LABELS_ONLY=True,
+    MODEL_PATH='../trainedModels/bigDataMediumModelLabelsOnly/',
+    SAMPLING_RATE=10000,
+    DESCRIPTION="Big Data including only perception labels, Medium Model (flan-t5-base, 250M Parameters)",
+)
+
 bigDataMediumModel = SimpleNamespace(
     BASE_MODEL_NAME="google/flan-t5-base",
     TRUST_REMOTE_CODE=False,

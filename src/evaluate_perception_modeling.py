@@ -6,7 +6,7 @@ from pytorch_lightning import Trainer
 import sys
 
 from trainingConfigs import default, bigDataSmallModel, bigDataMediumModel, bigDataBigModel, tinyDataSmallModel, \
-    smallDataBigBERT, bigDataSmallModelLabelsOnly
+    smallDataBigBERT, bigDataSmallModelLabelsOnly, bigDataMediumModelLabelsOnly
 
 
 
@@ -29,6 +29,9 @@ if __name__ == '__main__':
         trainingConfig = smallDataBigBERT
     elif configName == "bigDataSmallModelLabelsOnly":
         trainingConfig = bigDataSmallModelLabelsOnly
+    elif configName == "bigDataMediumModelLabelsOnly":
+        trainingConfig = bigDataMediumModelLabelsOnly
+
 
     if trainingConfig is None:
         raise Exception("Invalid config name: " + configName)
