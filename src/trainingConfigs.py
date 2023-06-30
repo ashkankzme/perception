@@ -103,10 +103,10 @@ bigDataLongMediumModel = SimpleNamespace(
     TRUST_REMOTE_CODE=False,
     BATCH_SIZE=2,
     ACCUMULATED_BATCHES=16,
-    MAX_INPUT_LENGTH=512,
-    MAX_OUTPUT_LENGTH=512,
+    MAX_INPUT_LENGTH=1024,
+    MAX_OUTPUT_LENGTH=256,
     DATASET_PATH='../data/trajectories/big/',
-    MODEL_PATH='../trainedModels/bigDataSmallModel/',
+    MODEL_PATH='../trainedModels/bigDataLongMediumModel/',
     SAMPLING_RATE=100000,
     DESCRIPTION="Big Data (100000 Sample Trajectories per worker), Small Model (flan-t5-small, 77M Parameters)",
 )
