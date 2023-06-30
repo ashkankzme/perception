@@ -55,7 +55,7 @@ if __name__ == '__main__':
 
     trainer = Trainer(accelerator='cuda',
                       strategy='ddp',
-                      devices=[2, 3],
+                      devices='auto',
                       default_root_dir=trainingConfig.MODEL_PATH + "Checkpoints",
                       callbacks=[early_stop_callback, lr_monitor],
                       accumulate_grad_batches=accumulatedBatches,
