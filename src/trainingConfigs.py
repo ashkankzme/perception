@@ -97,3 +97,16 @@ bigDataBigModel = SimpleNamespace(
     MODEL_PATH='../trainedModels/bigDataBigModel/',
     DESCRIPTION="Big Data (100000 Sample Trajectories per worker), Large Model (flan-t5-large, 780M Parameters)",
 )
+
+bigDataLongMediumModel = SimpleNamespace(
+    BASE_MODEL_NAME="google/long-t5-tglobal-base",
+    TRUST_REMOTE_CODE=False,
+    BATCH_SIZE=2,
+    ACCUMULATED_BATCHES=16,
+    MAX_INPUT_LENGTH=512,
+    MAX_OUTPUT_LENGTH=512,
+    DATASET_PATH='../data/trajectories/big/',
+    MODEL_PATH='../trainedModels/bigDataSmallModel/',
+    SAMPLING_RATE=100000,
+    DESCRIPTION="Big Data (100000 Sample Trajectories per worker), Small Model (flan-t5-small, 77M Parameters)",
+)

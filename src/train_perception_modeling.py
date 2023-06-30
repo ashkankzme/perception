@@ -5,30 +5,18 @@ from mrf_data_module import MRFDataModule
 from mrf_dataset_utility import MRFDatasetUtility as mrfdu
 import time, sys
 
-from trainingConfigs import default, bigDataSmallModel, bigDataMediumModel, bigDataBigModel, tinyDataSmallModel, \
-    smallDataBigBERT, bigDataSmallModelLabelsOnly, bigDataMediumModelLabelsOnly
+import trainingConfigs
+
 
 if __name__ == '__main__':
 
     # read first argument from command line, use the input to determine which config file to use
     trainingConfig = None
     configName = sys.argv[1] if len(sys.argv) > 1 else "notSpecified"
-    if configName == "default":
-        trainingConfig = default
-    elif configName == "bigDataSmallModel":
-        trainingConfig = bigDataSmallModel
-    elif configName == "bigDataMediumModel":
-        trainingConfig = bigDataMediumModel
-    elif configName == "bigDataBigModel":
-        trainingConfig = bigDataBigModel
-    elif configName == "tinyDataSmallModel":
-        trainingConfig = tinyDataSmallModel
-    elif configName == "smallDataBigBERT":
-        trainingConfig = smallDataBigBERT
-    elif configName == "bigDataSmallModelLabelsOnly":
-        trainingConfig = bigDataSmallModelLabelsOnly
-    elif configName == "bigDataMediumModelLabelsOnly":
-        trainingConfig = bigDataMediumModelLabelsOnly
+    if configName == "notSpecified":
+        raise Exception("config name not specified")
+
+    trainingConfig = getattr(trainingConfigs, configName, None)
 
     if trainingConfig is None:
         raise Exception("Invalid config name: " + configName)
@@ -63,12 +51,14 @@ if __name__ == '__main__':
     # mrf.prepare_data()
     model = MisinfoPerceptionT5(trainingConfig, len(mrf.train_dataloader())//trainingConfig.BATCH_SIZE)
 
+    accumulatedBatches = trainingConfig.ACCUMULATED_BATCHES if hasattr(trainingConfig, "ACCUMULATED_BATCHES") else 1
+
     trainer = Trainer(accelerator='cuda',
                       strategy='ddp',
-                      # devices=[0,1,2,3],
-                      devices=[0, 1],
+                      devices=[2, 3],
                       default_root_dir=trainingConfig.MODEL_PATH + "Checkpoints",
-                      callbacks=[early_stop_callback, lr_monitor],)
-                      # accumulate_grad_batches=trainingConfig.BATCH_SIZE//8,)
+                      callbacks=[early_stop_callback, lr_monitor],
+                      accumulate_grad_batches=accumulatedBatches,
+                      precision=16,)
     trainer.fit(model, datamodule=mrf)
     model.model.save_pretrained(trainingConfig.MODEL_PATH + "trained_model")
