@@ -44,7 +44,7 @@ if __name__ == '__main__':
     model = MisinfoPerceptionT5(trainingConfig, len(mrf.test_dataloader()) // trainingConfig.BATCH_SIZE, loadLocally=True, localModelPath=trainingConfig.MODEL_PATH + 'trained_model/')
     model.testSetJson = mrf.test_dataloader().dataset.jsonData
 
-    trainer = Trainer(accelerator='cuda', devices=[2, 3])
+    trainer = Trainer(accelerator='cuda', devices=[0, 1])
     # trainer = Trainer(accelerator='cuda', devices=[3])
     trainer.test(model, datamodule=mrf)
 
