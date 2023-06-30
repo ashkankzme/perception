@@ -2,10 +2,10 @@
 #SBATCH --job-name=misinfo_perception_modeling
 #SBATCH --mail-user=ashkank@umich.edu
 #SBATCH --mail-type=BEGIN,END
-#SBATCH --time=48:00:00
+#SBATCH --time=4:00:00
 #SBATCH --account=mihalcea98
 #SBATCH --cpus-per-task=16
-#SBATCH --gres=gpu:4
+#SBATCH --gres=gpu:2
 #SBATCH --partition=spgpu
 #SBATCH --output=/home/%u/logs/%x-%j.log
 #SBATCH --nodes=1
@@ -15,6 +15,5 @@
 source /home/ashkank/.bashrc
 conda activate perceptron
 cd /home/ashkank/perception/src
-python train_perception_modeling.py bigDataMediumModel gen
-python train_perception_modeling.py bigDataMediumModel load
-python train_perception_modeling.py bigDataBigModel load
+python train_perception_modeling.py bigDataMediumModelLabelsOnly gen &&
+python evaluate_perception_modeling.py bigDataMediumModelLabelsOnly
