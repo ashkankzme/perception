@@ -15,5 +15,5 @@
 source /home/ashkank/.bashrc
 conda activate perceptron
 cd /home/ashkank/perception/src
-python train_perception_modeling.py bigDataMediumModelLabelsOnly gen &&
+python train_perception_modeling.py bigDataMediumModelLabelsOnly gen
 python evaluate_perception_modeling.py bigDataMediumModelLabelsOnly
