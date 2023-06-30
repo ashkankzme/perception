@@ -1,4 +1,4 @@
-python train_perception_modeling.py bigDataSmallModel load &&
+python train_perception_modeling.py bigDataSmallModel gen &&
 python evaluate_perception_modeling.py bigDataSmallModel &&
-python train_perception_modeling.py bigDataSmallModelLabelsOnly load &&
+python train_perception_modeling.py bigDataSmallModelLabelsOnly gen &&
 python evaluate_perception_modeling.py bigDataSmallModelLabelsOnly

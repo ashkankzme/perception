@@ -334,14 +334,16 @@ class MRFDatasetUtility(object):
     def generateTrajectoriesFromMRFDataset(outputPath, labelsOnly=False):
         # workers = mrfdu.loadAndCleanMRFDataset('../data/mturk_data/', '../data/mrf_turk_processed.json')
         workers = loadObjectsFromJsonFile('../data/mrf_turk_processed.json')
-        # workers = sorted(workers, key=lambda x: len(x['annotatedFrames']), reverse=True)
         workers = [worker for worker in workers if len(worker['annotatedFrames']) >= 100]  # throwing out workers with less than 10 annotated frames
-        random.seed(1372)
-        random.shuffle(workers)
 
-        trainEvalCutOffIndex = int(len(workers) * 0.8)
-        evalTestCutOffIndex = int(len(workers) * 0.82)
-        trainWorkers, evalWorkers, testWorkers = workers[:trainEvalCutOffIndex], workers[trainEvalCutOffIndex:evalTestCutOffIndex], workers[evalTestCutOffIndex:]
+        topWorkerIDs = [worker['id'] for worker in sorted(workers, key=lambda x: len(x['annotatedFrames']), reverse=True)[:10]]
+        shuffleWorkers = [worker for worker in workers if worker['id'] not in topWorkerIDs]
+
+        random.seed(1373)
+        random.shuffle(shuffleWorkers)
+
+        trainWorkers = [worker for worker in workers if worker['id'] in topWorkerIDs] + workers[:-11]
+        evalWorkers, testWorkers = workers[-11:-10], workers[-10:]
         Trajectory.generateTrajectorySequencesFromMRFDataset(trainWorkers, {'min': 4, 'max': 8}, outputPath+'train_trajectories.json', labelsOnly=labelsOnly)
         Trajectory.generateTrajectorySequencesFromMRFDataset(evalWorkers, {'min': 4, 'max': 8}, outputPath+'eval_trajectories.json', labelsOnly=labelsOnly)
         Trajectory.generateTrajectorySequencesFromMRFDataset(testWorkers, {'min': 4, 'max': 8}, outputPath+'test_trajectories.json', labelsOnly=labelsOnly)

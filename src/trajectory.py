@@ -176,10 +176,10 @@ class Trajectory(object):
                 sampledFrames = worker['annotatedFrames'][pivotIndex: pivotIndex + K]
 
                 sampledFrames = [
-                    'Headline: ' + frame['Input.sentence'] + '\n' + 'Perceived Label: ' + frame["perceivedLabel"] + '\n' +
+                    'Headline: ' + frame['Input.sentence'] + '\n' +
                     ('' if labelsOnly else 'Reader\'s Reaction: ' + ", ".join(frame["reaction"]) + '\n') +
-                    ('' if labelsOnly else 'Writer\'s Intent: ' + ", ".join(frame["intent"]) + '\n')
-
+                    ('' if labelsOnly else 'Writer\'s Intent: ' + ", ".join(frame["intent"]) + '\n') +
+                    'Perceived Label: ' + frame["perceivedLabel"] + '\n'
                     for frame in sampledFrames
                 ]
 
