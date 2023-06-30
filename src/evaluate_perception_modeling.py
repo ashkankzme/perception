@@ -23,14 +23,14 @@ if __name__ == '__main__':
         raise Exception("Invalid config name: " + configName)
 
     trainingConfig.BATCH_SIZE *= 8
-    # trainingConfig.MODEL_PATH = '/local2/ashkank/perception/trainedModels/bigDataSmallModel/trained_model/'
+    # trainingConfig.MODEL_PATH = '/local2/ashkank/perception/trainedModels/bigDataLongMediumModel/'
     # trainingConfig.DATASET_PATH = '/local2/ashkank/perception/data/trajectories/big/'
 
     mrf = MRFDataModule(trainingConfig)
     model = MisinfoPerceptionT5(trainingConfig, len(mrf.test_dataloader()) // trainingConfig.BATCH_SIZE, loadLocally=True, localModelPath=trainingConfig.MODEL_PATH + 'trained_model/')
     model.testSetJson = mrf.test_dataloader().dataset.jsonData
 
-    trainer = Trainer(accelerator='cuda', devices=[2, 3])
+    trainer = Trainer(accelerator='cuda', devices='auto')
     # trainer = Trainer(accelerator='cuda', devices=[3])
     trainer.test(model, datamodule=mrf)
 
