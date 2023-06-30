@@ -57,7 +57,8 @@ if __name__ == '__main__':
                       strategy='ddp',
                       devices='auto',
                       default_root_dir=trainingConfig.MODEL_PATH + "Checkpoints",
-                      callbacks=[early_stop_callback, lr_monitor],
+                      callbacks=[lr_monitor],
+                      # callbacks=[early_stop_callback, lr_monitor],
                       accumulate_grad_batches=accumulatedBatches,
                       precision=16,)
     trainer.fit(model, datamodule=mrf)
