@@ -3,6 +3,7 @@ from torch.utils.data import DataLoader
 from utils import loadObjectsFromJsonFile
 from transformers import AutoTokenizer
 from mrf_dataset import MRFDataset
+from masked_mrf_dataset import MaskedMRFDataset
 
 
 class MRFDataModule(pl.LightningDataModule):
@@ -15,6 +16,7 @@ class MRFDataModule(pl.LightningDataModule):
         self.maxOutputLength = datasetConfig.MAX_OUTPUT_LENGTH
         trustRemoteCode = True if datasetConfig.TRUST_REMOTE_CODE else False
         self.tokenizer = AutoTokenizer.from_pretrained(datasetConfig.BASE_MODEL_NAME, trust_remote_code=trustRemoteCode)
+        self.maskedDemographics = getattr(datasetConfig, 'MASKED_DEMOGRAPHICS', False)
 
         self.trainDataLoader = None
         self.valDataLoader = None
@@ -76,6 +78,6 @@ class MRFDataModule(pl.LightningDataModule):
 
 
     def _wrapInDatasetObj(self, fileName):
-        transformedData = MRFDataset(self.datasetPath + fileName, self.config)
+        transformedData = MaskedMRFDataset(self.datasetPath + fileName, self.config) if self.maskedDemographics else MRFDataset(self.datasetPath + fileName, self.config)
         # transformedData.set_format(type='torch', columns=['input_ids', 'attention_mask', 'labels'])
         return DataLoader(transformedData, batch_size=self.batchSize, shuffle=False, num_workers=1, pin_memory=True)

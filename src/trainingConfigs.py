@@ -58,7 +58,8 @@ bigDataSmallModelLabelsOnly = SimpleNamespace(
     LABELS_ONLY=True,
     MODEL_PATH='../trainedModels/bigDataSmallModelLabelsOnly/',
     SAMPLING_RATE=10000,
-    DESCRIPTION="Big Data (10000 Sample Trajectories per worker) including only perception labels, Small Model (flan-t5-small, 77M Parameters)",
+    DESCRIPTION="Including only perception labels, No demopgrahics, Small Model (flan-t5-small, 77M Parameters)",
+    MASKED_DEMOGRAPHICS=True,
 )
 
 bigDataMediumModelLabelsOnly = SimpleNamespace(
