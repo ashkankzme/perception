@@ -11,8 +11,8 @@ import trainingConfigs
 def evaluate(trainingConfig, evalMessage):
     print(evalMessage)
     trainingConfig.BATCH_SIZE *= 8
-    # trainingConfig.MODEL_PATH = '/local2/ashkank/perception/trainedModels/bigDataLongMediumModel/'
-    # trainingConfig.DATASET_PATH = '/local2/ashkank/perception/data/trajectories/big/'
+    # trainingConfig.MODEL_PATH = '/local2/ashkank/perception/trainedModels/bigDataSmallModelLabelsOnly/'
+    # trainingConfig.DATASET_PATH = '/local2/ashkank/perception/data/trajectories/biglabelsonly/'
     mrf = MRFDataModule(trainingConfig)
     model = MisinfoPerceptionT5(trainingConfig, len(mrf.test_dataloader()) // trainingConfig.BATCH_SIZE,
                                 loadLocally=True, localModelPath=trainingConfig.MODEL_PATH + 'trained_model/')
