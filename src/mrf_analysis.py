@@ -7,19 +7,22 @@ if __name__ == '__main__':
     # workers = mrfdu.loadAndCleanMRFDataset('../data/mturk_data/', '../data/mrf_turk_processed.json')
     workers = loadObjectsFromJsonFile('../data/mrf_turk_processed.json')
     workers = sorted(workers, key=lambda x: len(x['annotatedFrames']), reverse=True)
+    freqWorkersWDemographics = set()
 
     workerDemographicStats = {
         'age': 0,
         'education': 0,
         'gender': 0,
-        'race': 0
+        'race': 0,
+        'mediaConsumptionRegimen': 0
     }
 
     frequentWorkerDemographicStats = {
         'age': 0,
         'education': 0,
         'gender': 0,
-        'race': 0
+        'race': 0,
+        'mediaConsumptionRegimen': 0
     }
 
     for worker in workers:
@@ -29,23 +32,43 @@ if __name__ == '__main__':
         # )
         # print('------------------')
 
-        if worker['age'] is not None:
+        if worker['age'] != 'unknown':
+
             workerDemographicStats['age'] += 1
-            if len(worker['annotatedFrames']) > 100:
+            if len(worker['annotatedFrames']) >= 100:
+                freqWorkersWDemographics.add(worker['id'])
                 frequentWorkerDemographicStats['age'] += 1
-        if worker['education'] is not None:
+
+        if worker['education'] != 'unknown':
+
             workerDemographicStats['education'] += 1
-            if len(worker['annotatedFrames']) > 100:
+            if len(worker['annotatedFrames']) >= 100:
+                freqWorkersWDemographics.add(worker['id'])
                 frequentWorkerDemographicStats['education'] += 1
-        if worker['race'] is not None:
+
+        if worker['race'] is not None and len(worker['race']) > 0:
+
             workerDemographicStats['race'] += 1
-            if len(worker['annotatedFrames']) > 100:
+            if len(worker['annotatedFrames']) >= 100:
+                freqWorkersWDemographics.add(worker['id'])
                 frequentWorkerDemographicStats['race'] += 1
-        if worker['gender'] is not None:
+
+        if worker['gender'] != 'unknown':
+
             workerDemographicStats['gender'] += 1
-            if len(worker['annotatedFrames']) > 100:
+            if len(worker['annotatedFrames']) >= 100:
+                freqWorkersWDemographics.add(worker['id'])
                 frequentWorkerDemographicStats['gender'] += 1
+
+        if worker['mediaConsumptionRegimen'] is not None and len(worker['mediaConsumptionRegimen']) > 0:
+
+            workerDemographicStats['mediaConsumptionRegimen'] += 1
+            if len(worker['annotatedFrames']) >= 100:
+                freqWorkersWDemographics.add(worker['id'])
+                frequentWorkerDemographicStats['mediaConsumptionRegimen'] += 1
 
     print(workerDemographicStats)
     print('------------------')
     print(frequentWorkerDemographicStats)
+    print('------------------')
+    print(freqWorkersWDemographics)
