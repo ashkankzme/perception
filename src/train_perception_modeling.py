@@ -10,7 +10,7 @@ import trainingConfigs
 
 def train(trainingConfig, dataGeneration):
     if dataGeneration:
-        labelsOnly = trainingConfig.LABELS_ONLY if hasattr(trainingConfig, "LABELS_ONLY") else False
+        labelsOnly = getattr(trainingConfig, "LABELS_ONLY", False)
         # generates trajectories for training, validation and testing
         mrfdu.generateTrajectoriesFromMRFDataset(trainingConfig.DATASET_PATH, labelsOnly=labelsOnly)
         # wait for i/o to finish
@@ -41,8 +41,6 @@ def train(trainingConfig, dataGeneration):
 
 
 def parseArgs(args):
-    # read first argument from command line, use the input to determine which config file to use
-    trainingConfig = None
     configName = args[1] if len(args) > 1 else "notSpecified"
     if configName == "notSpecified":
         raise Exception("config name not specified")

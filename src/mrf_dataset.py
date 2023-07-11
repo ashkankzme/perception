@@ -15,8 +15,6 @@ class MRFDataset(Dataset):
         self.jsonData = loadObjectsFromJsonFile(self.datasetPath)
         # downsampling the dataset, in case too big for evaluation. commenting the following line will remove the downsampling
         # self.jsonData = random.sample(self.jsonData, int(round(len(self.jsonData) * 0.04)))
-        # self.data = MRFDataset.formatInput(self.data)
-        # self.data = self.transform(self.data)
 
     def __len__(self):
         return len(self.jsonData)
@@ -40,8 +38,6 @@ class MRFDataset(Dataset):
         for labels_example in labels:
             labels_example = [label if label != 0 else -100 for label in labels_example]
             labels_with_ignore_index.append(labels_example)
-
-        # model_inputs["labels"] = labels_with_ignore_index
 
         model_inputs = [{
             "input_ids": torch.tensor(model_inputs.input_ids[idx], dtype=torch.long),

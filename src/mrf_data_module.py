@@ -7,7 +7,7 @@ from masked_mrf_dataset import MaskedMRFDataset
 
 
 class MRFDataModule(pl.LightningDataModule):
-    def __init__(self, datasetConfig):
+    def __init__(self, datasetConfig, excludedWorkers = []):
         super().__init__()
         self.config = datasetConfig
         self.batchSize = datasetConfig.BATCH_SIZE
@@ -17,6 +17,7 @@ class MRFDataModule(pl.LightningDataModule):
         trustRemoteCode = True if datasetConfig.TRUST_REMOTE_CODE else False
         self.tokenizer = AutoTokenizer.from_pretrained(datasetConfig.BASE_MODEL_NAME, trust_remote_code=trustRemoteCode)
         self.maskedDemographics = getattr(datasetConfig, 'MASKED_DEMOGRAPHICS', False)
+        self.excludedWorkers = excludedWorkers
 
         self.trainDataLoader = None
         self.valDataLoader = None
@@ -78,6 +79,8 @@ class MRFDataModule(pl.LightningDataModule):
 
 
     def _wrapInDatasetObj(self, fileName):
-        transformedData = MaskedMRFDataset(self.datasetPath + fileName, self.config) if self.maskedDemographics else MRFDataset(self.datasetPath + fileName, self.config)
+        transformedData = MaskedMRFDataset(self.datasetPath + fileName, self.config,
+                                           removeDemographics=self.maskedDemographics,
+                                           excludedWorkers=self.excludedWorkers)
         # transformedData.set_format(type='torch', columns=['input_ids', 'attention_mask', 'labels'])
         return DataLoader(transformedData, batch_size=self.batchSize, shuffle=False, num_workers=1, pin_memory=True)
