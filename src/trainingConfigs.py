@@ -111,3 +111,17 @@ bigDataLongMediumModel = SimpleNamespace(
     SAMPLING_RATE=100000,
     DESCRIPTION="Big Data (100000 Sample Trajectories per worker), Small Model (flan-t5-small, 77M Parameters)",
 )
+
+leaveOneOut = SimpleNamespace(
+    BASE_MODEL_NAME="google/flan-t5-small",
+    TRUST_REMOTE_CODE=False,
+    BATCH_SIZE=4,
+    MAX_INPUT_LENGTH=512,
+    MAX_OUTPUT_LENGTH=512,
+    DATASET_PATH='../data/trajectories/leaveoneout/',
+    LABELS_ONLY=True,
+    MODEL_PATH='../trainedModels/leaveOneOut/',
+    SAMPLING_RATE=10000,
+    DESCRIPTION="Trained only on perception labels, Small Model (flan-t5-small, 77M Parameters), training data leaves out anyone with demographics",
+    MASKED_DEMOGRAPHICS=False,
+)
