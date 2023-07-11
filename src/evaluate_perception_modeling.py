@@ -25,17 +25,21 @@ def evaluate(trainingConfig, evalMessage):
     print('-'*30)
 
 
-if __name__ == '__main__':
-
+def parseEvalConfig(args):
     # read first argument from command line, use the input to determine which config file to use
     trainingConfig = None
-    configName = sys.argv[1] if len(sys.argv) > 1 else "notSpecified"
+    configName = args[1] if len(args) > 1 else "notSpecified"
     if configName == "notSpecified":
         raise Exception("config name not specified")
-
     trainingConfig = getattr(trainingConfigs, configName, None)
-
     if trainingConfig is None:
         raise Exception("Invalid config name: " + configName)
+
+    return trainingConfig
+
+
+if __name__ == '__main__':
+
+    trainingConfig = parseEvalConfig(sys.argv)
 
     evaluate(trainingConfig, trainingConfig.DESCRIPTION)
