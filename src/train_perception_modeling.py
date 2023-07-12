@@ -8,7 +8,7 @@ import time, sys
 import trainingConfigs
 
 
-def train(trainingConfig, dataGeneration):
+def train(trainingConfig, dataGeneration, mrf, modelOutputPath, loadLocally=False, localModelPath=None):
     if dataGeneration:
         labelsOnly = getattr(trainingConfig, "LABELS_ONLY", False)
         # generates trajectories for training, validation and testing
@@ -25,19 +25,19 @@ def train(trainingConfig, dataGeneration):
         mode='min'
     )
     lr_monitor = LearningRateMonitor(logging_interval='step')
-    mrf = MRFDataModule(trainingConfig)
-    # mrf.prepare_data()
-    model = MisinfoPerceptionT5(trainingConfig, len(mrf.train_dataloader()) // trainingConfig.BATCH_SIZE)
+
+    model = MisinfoPerceptionT5(trainingConfig, len(mrf.train_dataloader()) // trainingConfig.BATCH_SIZE,
+                                loadLocally=loadLocally, localModelPath=localModelPath)
     accumulatedBatches = trainingConfig.ACCUMULATED_BATCHES if hasattr(trainingConfig, "ACCUMULATED_BATCHES") else 1
     trainer = Trainer(accelerator='cuda',
                       strategy='ddp',
                       devices='auto',
-                      default_root_dir=trainingConfig.MODEL_PATH + "Checkpoints",
+                      default_root_dir=modelOutputPath + "Checkpoints",
                       callbacks=[early_stop_callback, lr_monitor],
                       accumulate_grad_batches=accumulatedBatches, )
     # precision=16,)
     trainer.fit(model, datamodule=mrf)
-    model.model.save_pretrained(trainingConfig.MODEL_PATH + "trained_model")
+    model.model.save_pretrained(modelOutputPath + "trained_model")
 
 
 def parseArgs(args):
@@ -62,5 +62,5 @@ def parseArgs(args):
 if __name__ == '__main__':
 
     trainingConfig, dataGeneration = parseArgs(sys.argv)
-
-    train(trainingConfig, dataGeneration)
+    mrf = MRFDataModule(trainingConfig)
+    train(trainingConfig, dataGeneration, mrf, trainingConfig.MODEL_PATH)
