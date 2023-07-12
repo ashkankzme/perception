@@ -67,8 +67,12 @@ if __name__ == '__main__':
                 freqWorkersWDemographics.add(worker['id'])
                 frequentWorkerDemographicStats['mediaConsumptionRegimen'] += 1
 
+    freqWorkersWithoutDemographics = [worker['id'] for worker in workers if len(worker['annotatedFrames']) >= 100 and worker['id'] not in freqWorkersWDemographics]
+
     print(workerDemographicStats)
     print('------------------')
     print(frequentWorkerDemographicStats)
     print('------------------')
     print(freqWorkersWDemographics)
+    print('------------------')
+    print(freqWorkersWithoutDemographics)
