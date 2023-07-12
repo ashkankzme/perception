@@ -26,8 +26,6 @@ def evaluate(trainingConfig, evalMessage):
 
 
 def parseEvalConfig(args):
-    # read first argument from command line, use the input to determine which config file to use
-    trainingConfig = None
     configName = args[1] if len(args) > 1 else "notSpecified"
     if configName == "notSpecified":
         raise Exception("config name not specified")
