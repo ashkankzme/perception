@@ -122,8 +122,9 @@ class MisinfoPerceptionT5(pl.LightningModule):
 
 
     def teardown(self, stage: str) -> None:
-        print('saving model before teardown')
-        self.model.save_pretrained(self.modelOutputPath)
+        # uncomment for model training TODO fix
+        # print('saving model before teardown')
+        # self.model.save_pretrained(self.modelOutputPath)
         time.sleep(5)
         print('tearing down model')
         self.model = None
