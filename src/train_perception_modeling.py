@@ -11,13 +11,8 @@ import time, sys
 import trainingConfigs
 
 
-def train(trainingConfig, dataGeneration, mrf, modelOutputPath, loadLocally=False, localModelPath=None):
-    if dataGeneration:
-        labelsOnly = getattr(trainingConfig, "LABELS_ONLY", False)
-        # generates trajectories for training, validation and testing
-        mrfdu.generateTrajectoriesFromMRFDataset(trainingConfig.DATASET_PATH, labelsOnly=labelsOnly)
-        # wait for i/o to finish
-        time.sleep(60)
+def train(trainingConfig, mrf, modelOutputPath, loadLocally=False, localModelPath=None):
+
     # https://colab.research.google.com/github/NielsRogge/Transformers-Tutorials/blob/master/T5/Fine_tune_CodeT5_for_generating_docstrings_from_Ruby_code.ipynb#scrollTo=gq2-xLG_alXH
     # for early stopping, see https://pytorch-lightning.readthedocs.io/en/1.0.0/early_stopping.html?highlight=early%20stopping
     early_stop_callback = EarlyStopping(
@@ -71,5 +66,13 @@ def parseArgs(args):
 if __name__ == '__main__':
 
     trainingConfig, dataGeneration = parseArgs(sys.argv)
+
+    if dataGeneration:
+        labelsOnly = getattr(trainingConfig, "LABELS_ONLY", False)
+        # generates trajectories for training, validation and testing
+        mrfdu.generateTrajectoriesFromMRFDataset(trainingConfig.DATASET_PATH, labelsOnly=labelsOnly)
+        # wait for i/o to finish
+        time.sleep(60)
+
     mrf = MRFDataModule(trainingConfig)
-    train(trainingConfig, dataGeneration, mrf, trainingConfig.MODEL_PATH)
+    train(trainingConfig, mrf, trainingConfig.MODEL_PATH)

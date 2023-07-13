@@ -7,8 +7,10 @@ from masked_mrf_dataset import MaskedMRFDataset
 
 
 class MRFDataModule(pl.LightningDataModule):
-    def __init__(self, datasetConfig, excludedWorkers = []):
+    def __init__(self, datasetConfig, excludedWorkers=None):
         super().__init__()
+        if excludedWorkers is None:
+            excludedWorkers = []
         self.config = datasetConfig
         self.batchSize = datasetConfig.BATCH_SIZE
         self.datasetPath = datasetConfig.DATASET_PATH
