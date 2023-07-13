@@ -121,9 +121,12 @@ class MisinfoPerceptionT5(pl.LightningModule):
 
 
     def teardown(self, stage: str) -> None:
+        print('tearing down model')
         self.model = None
         self.tokenizer = None
         gc.collect()
         with torch.no_grad():
             torch.cuda.empty_cache()
+
+        print('tear down complete, sleeping for 5 seconds')
         time.sleep(5)

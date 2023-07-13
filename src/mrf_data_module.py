@@ -89,6 +89,7 @@ class MRFDataModule(pl.LightningDataModule):
 
     def teardown(self, stage: str) -> None:
         # Used to clean-up when the run is finished.
+        print('tearing down data module')
         if self.testDataLoader:
             self.testDataLoader = None
         if self.valDataLoader:
@@ -98,4 +99,5 @@ class MRFDataModule(pl.LightningDataModule):
         with torch.no_grad():
             torch.cuda.empty_cache()
 
+        print('tear down complete, sleeping for 5 seconds')
         time.sleep(5)
