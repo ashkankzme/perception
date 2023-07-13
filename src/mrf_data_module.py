@@ -1,4 +1,5 @@
 import pytorch_lightning as pl
+import torch
 from torch.utils.data import DataLoader
 from utils import loadObjectsFromJsonFile
 from transformers import AutoTokenizer
@@ -86,3 +87,15 @@ class MRFDataModule(pl.LightningDataModule):
                                            excludedWorkers=self.excludedWorkers)
         # transformedData.set_format(type='torch', columns=['input_ids', 'attention_mask', 'labels'])
         return DataLoader(transformedData, batch_size=self.batchSize, shuffle=False, num_workers=1, pin_memory=True)
+
+
+    def teardown(self, stage: str) -> None:
+        # Used to clean-up when the run is finished.
+        if self.testDataLoader:
+            self.testDataLoader = None
+        if self.valDataLoader:
+            self.valDataLoader = None
+        if self.trainDataLoader:
+            self.trainDataLoader = None
+        with torch.no_grad():
+            torch.cuda.empty_cache()

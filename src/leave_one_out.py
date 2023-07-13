@@ -1,7 +1,3 @@
-import gc
-
-import torch
-
 from utils import loadObjectsFromJsonFile
 from train_perception_modeling import parseArgs, train
 from mrf_data_module import MRFDataModule
@@ -21,11 +17,6 @@ if __name__ == '__main__':
     train(trainingConfig, mrf, trainingConfig.MODEL_OUTPUT_PATH+'_base/')
 
     # todo properly tear down the model and data in memory to avoid OOM errors
-    mrf = None
-    gc.collect()
-    with torch.no_grad():
-        torch.cuda.empty_cache()
-    time.sleep(5)
 
     # leave one out training
     for workerId in workerIdsWDemographics:
@@ -35,11 +26,6 @@ if __name__ == '__main__':
               localModelPath=trainingConfig.MODEL_OUTPUT_PATH+'_base/trained_model/')
 
         # todo properly tear down the model and data in memory to avoid OOM errors
-        mrf = None
-        gc.collect()
-        with torch.no_grad():
-            torch.cuda.empty_cache()
-        time.sleep(5)
 
     # leave one out evaluation
     for workerId in workerIdsWDemographics:
