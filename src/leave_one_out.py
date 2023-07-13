@@ -22,7 +22,7 @@ if __name__ == '__main__':
     # train a base model with all the non-demographic workers, save results
     print("Training base model...")
     mrf = MRFDataModule(trainingConfig, excludedWorkers=workerIdsWDemographics)
-    train(trainingConfig, mrf, trainingConfig.MODEL_OUTPUT_PATH+'_base/')
+    train(trainingConfig, mrf, trainingConfig.MODEL_PATH+'_base/')
     print("Base model trained.")
 
     # leave one out training
@@ -30,6 +30,6 @@ if __name__ == '__main__':
         # load model locally, exclude non-demographic workers + current worker from training
         print("Training model with worker " + workerId + " excluded...")
         mrf = MRFDataModule(trainingConfig, excludedWorkers=[workerId]+workerIdsWithoutDemographics)
-        train(trainingConfig, mrf, trainingConfig.MODEL_OUTPUT_PATH+'_loo_'+workerId+'/', loadLocally=True,
-              localModelPath=trainingConfig.MODEL_OUTPUT_PATH+'_base/trained_model/')
+        train(trainingConfig, mrf, trainingConfig.MODEL_PATH+'_loo_'+workerId+'/', loadLocally=True,
+              localModelPath=trainingConfig.MODEL_PATH+'_base/trained_model/')
         print("Model trained with worker " + workerId + " excluded.")
