@@ -1,31 +1,35 @@
 from utils import loadObjectsFromJsonFile
 from train_perception_modeling import parseArgs, train
 from mrf_data_module import MRFDataModule
+from mrf_dataset_utility import MRFDatasetUtility as mrfdu
 import sys, time
 
 
 if __name__ == '__main__':
     trainingConfig, dataGeneration = parseArgs(sys.argv)
 
-
-
+    print("Loading worker ids...")
     workerIdsWDemographics = loadObjectsFromJsonFile('../data/worker_ids_with_demographics.json')
     workerIdsWithoutDemographics = loadObjectsFromJsonFile('../data/worker_ids_without_demographics.json')
 
+    if dataGeneration:
+        labelsOnly = getattr(trainingConfig, "LABELS_ONLY", False)
+        # generates trajectories for training, validation and testing
+        mrfdu.generateLeaveOneOutTrajectories(trainingConfig.DATASET_PATH, labelsOnly=labelsOnly, testWorkerIds=workerIdsWDemographics)
+        # wait for i/o to finish
+        time.sleep(10)
+
     # train a base model with all the non-demographic workers, save results
+    print("Training base model...")
     mrf = MRFDataModule(trainingConfig, excludedWorkers=workerIdsWDemographics)
     train(trainingConfig, mrf, trainingConfig.MODEL_OUTPUT_PATH+'_base/')
+    print("Base model trained.")
 
     # leave one out training
     for workerId in workerIdsWDemographics:
         # load model locally, exclude non-demographic workers + current worker from training
+        print("Training model with worker " + workerId + " excluded...")
         mrf = MRFDataModule(trainingConfig, excludedWorkers=[workerId]+workerIdsWithoutDemographics)
         train(trainingConfig, mrf, trainingConfig.MODEL_OUTPUT_PATH+'_loo_'+workerId+'/', loadLocally=True,
               localModelPath=trainingConfig.MODEL_OUTPUT_PATH+'_base/trained_model/')
-
-
-    # leave one out evaluation
-    for workerId in workerIdsWDemographics:
-        # load model trained explicitly for this worker, evaluate on this worker only
-        print()
-        # todo
+        print("Model trained with worker " + workerId + " excluded.")

@@ -67,7 +67,7 @@ if __name__ == '__main__':
         # generates trajectories for training, validation and testing
         mrfdu.generateTrajectoriesFromMRFDataset(trainingConfig.DATASET_PATH, labelsOnly=labelsOnly)
         # wait for i/o to finish
-        time.sleep(60)
+        time.sleep(10)
 
     mrf = MRFDataModule(trainingConfig)
     train(trainingConfig, mrf, trainingConfig.MODEL_PATH)

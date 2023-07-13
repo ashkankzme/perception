@@ -349,8 +349,10 @@ class MRFDatasetUtility(object):
         Trajectory.generateTrajectorySequencesFromMRFDataset(testWorkers, {'min': 4, 'max': 8}, outputPath+'test_trajectories.json', labelsOnly=labelsOnly)
 
     @staticmethod
-    def generateLeaveOneOutTrajectories(outputPath, labelsOnly=False, testWorkerIds=[]):
+    def generateLeaveOneOutTrajectories(outputPath, labelsOnly=False, testWorkerIds=None):
         # workers = mrfdu.loadAndCleanMRFDataset('../data/mturk_data/', '../data/mrf_turk_processed.json')
+        if testWorkerIds is None:
+            testWorkerIds = []
         workers = loadObjectsFromJsonFile('../data/mrf_turk_processed.json')
         workers = [worker for worker in workers if len(worker['annotatedFrames']) >= 100]  # throwing out workers with less than 10 annotated frames
 
