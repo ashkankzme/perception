@@ -13,7 +13,7 @@ def evaluate(trainingConfig, mrf, localModelPath):
     model = MisinfoPerceptionT5(trainingConfig, len(mrf.test_dataloader()) // trainingConfig.BATCH_SIZE,
                                 loadLocally=True, localModelPath=localModelPath)
     model.testSetJson = mrf.test_dataloader().dataset.jsonData
-    trainer = Trainer(accelerator='cuda', devices='auto')
+    trainer = Trainer(accelerator='cuda', devices=1)
     # trainer = Trainer(accelerator='cuda', devices=[3])
     trainer.test(model, datamodule=mrf)
     yPred, yTrue = model.reduceTestResults()
