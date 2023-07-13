@@ -4,7 +4,7 @@ import gc, torch, time
 
 
 class MisinfoPerceptionT5(pl.LightningModule):
-    def __init__(self, config, trainSetLength, loadLocally=False, localModelPath=None, lr=5e-5, num_train_epochs=5, warmup_steps=100):
+    def __init__(self, config, trainSetLength, loadLocally=False, localModelPath=None, modelOutputPath=None, lr=5e-5, num_train_epochs=5, warmup_steps=100):
         super().__init__()
 
         self.config = config
@@ -24,6 +24,7 @@ class MisinfoPerceptionT5(pl.LightningModule):
 
         self.testResults = []
         self.testSetJson = None
+        self.modelOutputPath = modelOutputPath if modelOutputPath else self.config.MODEL_PATH + "trained_model"
 
     def common_step(self, batch, batch_idx):
         outputs = self(**batch)
@@ -121,6 +122,9 @@ class MisinfoPerceptionT5(pl.LightningModule):
 
 
     def teardown(self, stage: str) -> None:
+        print('saving model before teardown')
+        self.model.save_pretrained(self.modelOutputPath)
+        time.sleep(5)
         print('tearing down model')
         self.model = None
         self.tokenizer = None

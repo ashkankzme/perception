@@ -25,18 +25,16 @@ def train(trainingConfig, mrf, modelOutputPath, loadLocally=False, localModelPat
     lr_monitor = LearningRateMonitor(logging_interval='step')
 
     model = MisinfoPerceptionT5(trainingConfig, len(mrf.train_dataloader()) // trainingConfig.BATCH_SIZE,
-                                loadLocally=loadLocally, localModelPath=localModelPath)
+                                loadLocally=loadLocally, localModelPath=localModelPath, modelOutputPath=modelOutputPath)
     accumulatedBatches = trainingConfig.ACCUMULATED_BATCHES if hasattr(trainingConfig, "ACCUMULATED_BATCHES") else 1
     trainer = Trainer(accelerator='cuda',
                       strategy='ddp',
                       devices='auto',
-                      default_root_dir=modelOutputPath + "Checkpoints",
+                      default_root_dir=trainingConfig.MODEL_PATH + "Checkpoints",
                       callbacks=[early_stop_callback, lr_monitor],
                       accumulate_grad_batches=accumulatedBatches, )
     # precision=16,)
     trainer.fit(model, datamodule=mrf)
-    model.model.save_pretrained(modelOutputPath + "trained_model")
-
 
 
 def parseArgs(args):
@@ -70,4 +68,4 @@ if __name__ == '__main__':
         time.sleep(10)
 
     mrf = MRFDataModule(trainingConfig)
-    train(trainingConfig, mrf, trainingConfig.MODEL_PATH)
+    train(trainingConfig, mrf, trainingConfig.MODEL_PATH+"trained_model")
