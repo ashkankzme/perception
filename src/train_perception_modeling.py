@@ -1,3 +1,6 @@
+import gc
+
+import torch
 from pytorch_lightning import Trainer
 from pytorch_lightning.callbacks import EarlyStopping, LearningRateMonitor
 from misinfo_perception_t5 import MisinfoPerceptionT5
@@ -38,6 +41,12 @@ def train(trainingConfig, dataGeneration, mrf, modelOutputPath, loadLocally=Fals
     # precision=16,)
     trainer.fit(model, datamodule=mrf)
     model.model.save_pretrained(modelOutputPath + "trained_model")
+    model = None
+    trainer = None
+    gc.collect()
+    with torch.no_grad():
+        torch.cuda.empty_cache()
+    time.sleep(5)
 
 
 def parseArgs(args):
