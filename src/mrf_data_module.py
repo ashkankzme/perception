@@ -1,10 +1,9 @@
 import pytorch_lightning as pl
 import torch
 from torch.utils.data import DataLoader
-from utils import loadObjectsFromJsonFile
 from transformers import AutoTokenizer
-from mrf_dataset import MRFDataset
 from masked_mrf_dataset import MaskedMRFDataset
+import time
 
 
 class MRFDataModule(pl.LightningDataModule):
@@ -85,7 +84,6 @@ class MRFDataModule(pl.LightningDataModule):
         transformedData = MaskedMRFDataset(self.datasetPath + fileName, self.config,
                                            removeDemographics=self.maskedDemographics,
                                            excludedWorkers=self.excludedWorkers)
-        # transformedData.set_format(type='torch', columns=['input_ids', 'attention_mask', 'labels'])
         return DataLoader(transformedData, batch_size=self.batchSize, shuffle=False, num_workers=1, pin_memory=True)
 
 
@@ -99,3 +97,5 @@ class MRFDataModule(pl.LightningDataModule):
             self.trainDataLoader = None
         with torch.no_grad():
             torch.cuda.empty_cache()
+
+        time.sleep(5)

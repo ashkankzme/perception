@@ -1,6 +1,6 @@
 from transformers import AdamW, get_linear_schedule_with_warmup, AutoModelForSeq2SeqLM, AutoTokenizer
 import pytorch_lightning as pl
-from utils import loadObjectsFromJsonFile
+import gc, torch, time
 
 
 class MisinfoPerceptionT5(pl.LightningModule):
@@ -118,3 +118,12 @@ class MisinfoPerceptionT5(pl.LightningModule):
                         'frequency': 1}
 
         return {"optimizer": optimizer, "lr_scheduler": lr_scheduler}
+
+
+    def teardown(self, stage: str) -> None:
+        self.model = None
+        self.tokenizer = None
+        gc.collect()
+        with torch.no_grad():
+            torch.cuda.empty_cache()
+        time.sleep(5)

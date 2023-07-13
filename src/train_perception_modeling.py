@@ -36,12 +36,7 @@ def train(trainingConfig, mrf, modelOutputPath, loadLocally=False, localModelPat
     # precision=16,)
     trainer.fit(model, datamodule=mrf)
     model.model.save_pretrained(modelOutputPath + "trained_model")
-    model = None
-    trainer = None
-    gc.collect()
-    with torch.no_grad():
-        torch.cuda.empty_cache()
-    time.sleep(5)
+
 
 
 def parseArgs(args):
