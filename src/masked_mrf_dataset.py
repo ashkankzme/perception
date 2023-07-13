@@ -3,8 +3,10 @@ from demographic_utils import DemographicUtils
 
 
 class MaskedMRFDataset(MRFDataset):
-    def __init__(self, datasetPath, config, removeDemographics=False, excludedWorkers = []):
+    def __init__(self, datasetPath, config, removeDemographics=False, excludedWorkers=None):
         super().__init__(datasetPath, config)
+        if excludedWorkers is None:
+            excludedWorkers = []
         if removeDemographics:
             self.jsonData = self.maskDemographics(self.jsonData)
         if excludedWorkers:
