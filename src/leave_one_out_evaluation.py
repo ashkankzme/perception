@@ -1,10 +1,11 @@
 from evaluate_perception_modeling import evaluate, parseEvalConfig
 from mrf_data_module import MRFDataModule
-from utils import loadObjectsFromJsonFile, saveObjectsToJsonFile
+from utils import loadObjectsFromJsonFile, saveToJsonFile
 import sys
 
 if __name__ == '__main__':
     evalConfig = parseEvalConfig(sys.argv)
+    evalConfig.BATCH_SIZE *= 8
 
     print("Loading worker ids...")
     workerIdsWDemographics = loadObjectsFromJsonFile('../data/worker_ids_with_demographics.json')
@@ -44,4 +45,4 @@ if __name__ == '__main__':
         setattr(evalConfig, "MASKED_DEMOGRAPHICS", False)
         print('-' * 25)
 
-    saveObjectsToJsonFile(results, evalConfig.DATASET_PATH + 'test_results.json')
+    saveToJsonFile(results, evalConfig.DATASET_PATH + 'test_results.json')
