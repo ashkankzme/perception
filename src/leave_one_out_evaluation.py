@@ -10,8 +10,8 @@ if __name__ == '__main__':
     print("Loading worker ids...")
     workerIdsWDemographics = loadObjectsFromJsonFile('../data/worker_ids_with_demographics.json')
     results = []
-    evalConfig.MODEL_PATH = '/local2/ashkank/perception/trainedModels/leaveOneOut'
-    evalConfig.DATASET_PATH = '/local2/ashkank/perception/data/trajectories/leaveoneout/'
+    # evalConfig.MODEL_PATH = '/local2/ashkank/perception/trainedModels/leaveOneOut'
+    # evalConfig.DATASET_PATH = '/local2/ashkank/perception/data/trajectories/leaveoneout/'
 
     # evaluate the base model with all the demographic workers
     print("Evaluating the base model...")
