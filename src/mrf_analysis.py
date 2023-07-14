@@ -1,14 +1,14 @@
 import random
-from src.mrf_dataset_utility import MRFDatasetUtility as mrfdu
-from utils import saveObjectsToJsonFile, loadObjectsFromJsonFile
+from mrf_dataset_utility import MRFDatasetUtility as mrfdu
+from demographic_utils import DemographicUtils
+from utils import loadObjectsFromJsonFile
 
 
-if __name__ == '__main__':
+def analyseMRFWorkerStats():
     # workers = mrfdu.loadAndCleanMRFDataset('../data/mturk_data/', '../data/mrf_turk_processed.json')
     workers = loadObjectsFromJsonFile('../data/mrf_turk_processed.json')
     workers = sorted(workers, key=lambda x: len(x['annotatedFrames']), reverse=True)
     freqWorkersWDemographics = set()
-
     workerDemographicStats = {
         'age': 0,
         'education': 0,
@@ -16,7 +16,6 @@ if __name__ == '__main__':
         'race': 0,
         'mediaConsumptionRegimen': 0
     }
-
     frequentWorkerDemographicStats = {
         'age': 0,
         'education': 0,
@@ -24,7 +23,6 @@ if __name__ == '__main__':
         'race': 0,
         'mediaConsumptionRegimen': 0
     }
-
     for worker in workers:
         # print(
         #     f'ID: {worker["id"]}, Age: {worker["age"]}, Education: {worker["education"]}, Gender: {worker["gender"]}, '
@@ -67,8 +65,9 @@ if __name__ == '__main__':
                 freqWorkersWDemographics.add(worker['id'])
                 frequentWorkerDemographicStats['mediaConsumptionRegimen'] += 1
 
-    freqWorkersWithoutDemographics = [worker['id'] for worker in workers if len(worker['annotatedFrames']) >= 100 and worker['id'] not in freqWorkersWDemographics]
-
+    freqWorkersWithoutDemographics = [worker['id'] for worker in workers if
+                                      len(worker['annotatedFrames']) >= 100 and worker[
+                                          'id'] not in freqWorkersWDemographics]
     print(workerDemographicStats)
     print('------------------')
     print(frequentWorkerDemographicStats)
@@ -76,3 +75,25 @@ if __name__ == '__main__':
     print(freqWorkersWDemographics)
     print('------------------')
     print(freqWorkersWithoutDemographics)
+
+
+def printDemographicWorkerStats():
+    testData = loadObjectsFromJsonFile('/local2/ashkank/perception/data/trajectories/leaveoneout/test_trajectories.json')
+    # testData = loadObjectsFromJsonFile('../data/trajectories/leaveoneout/test_trajectories.json')
+    workerDemographics = {}
+    for dp in testData:
+        workerId = DemographicUtils.extractWorkerId(dp['X'])
+        if workerId not in workerDemographics:
+            workerDemographics[workerId] = DemographicUtils.extractHeader(dp['X'])
+        else:
+            continue
+
+    for workerId, header in workerDemographics.items():
+        print(header)
+        print(f'test data points: {len([dp for dp in testData if DemographicUtils.extractWorkerId(dp["X"]) == workerId])}')
+        print('------------------')
+
+
+if __name__ == '__main__':
+    # analyseMRFWorkerStats()
+    printDemographicWorkerStats()
