@@ -68,5 +68,6 @@ if __name__ == '__main__':
         # wait for i/o to finish
         time.sleep(10)
 
+    setattr(trainingConfig, 'SAVE_MODEL', True)
     mrf = MRFDataModule(trainingConfig)
     train(trainingConfig, mrf, trainingConfig.MODEL_PATH+"trained_model")

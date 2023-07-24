@@ -19,6 +19,8 @@ if __name__ == '__main__':
         # wait for i/o to finish
         time.sleep(10)
 
+    setattr(trainingConfig, 'SAVE_MODEL', True)
+
     # train a base model with all the non-demographic workers, save results
     print("Training base model...")
     mrf = MRFDataModule(trainingConfig, excludedWorkers=workerIdsWDemographics)
