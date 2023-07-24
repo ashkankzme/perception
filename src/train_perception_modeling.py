@@ -11,13 +11,12 @@ import time, sys
 import trainingConfigs
 
 
-def train(trainingConfig, mrf, modelOutputPath, loadLocally=False, localModelPath=None):
+def train(trainingConfig, mrf, modelOutputPath, loadLocally=False, localModelPath=None, lossMonitor='validation_loss'):
 
     # https://colab.research.google.com/github/NielsRogge/Transformers-Tutorials/blob/master/T5/Fine_tune_CodeT5_for_generating_docstrings_from_Ruby_code.ipynb#scrollTo=gq2-xLG_alXH
     # for early stopping, see https://pytorch-lightning.readthedocs.io/en/1.0.0/early_stopping.html?highlight=early%20stopping
     early_stop_callback = EarlyStopping(
-        monitor='training_loss',
-        # monitor='validation_loss',
+        monitor=lossMonitor,
         patience=3,
         strict=False,
         verbose=False,

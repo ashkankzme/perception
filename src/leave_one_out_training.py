@@ -24,7 +24,7 @@ if __name__ == '__main__':
     # train a base model with all the non-demographic workers, save results
     print("Training base model...")
     mrf = MRFDataModule(trainingConfig, excludedWorkers=workerIdsWDemographics)
-    train(trainingConfig, mrf, trainingConfig.MODEL_PATH+'_base/trained_model/')
+    train(trainingConfig, mrf, trainingConfig.MODEL_PATH+'_base/trained_model/', lossMonitor='training_loss')
     print("Base model trained.")
 
     # leave one out training
@@ -33,5 +33,5 @@ if __name__ == '__main__':
         print("Training model with worker " + workerId + " excluded...")
         mrf = MRFDataModule(trainingConfig, excludedWorkers=[workerId]+workerIdsWithoutDemographics)
         train(trainingConfig, mrf, trainingConfig.MODEL_PATH+'_loo_'+workerId+'/', loadLocally=True,
-              localModelPath=trainingConfig.MODEL_PATH+'_base/trained_model/')
+              localModelPath=trainingConfig.MODEL_PATH+'_base/trained_model/', lossMonitor='training_loss')
         print("Model trained with worker " + workerId + " excluded.")
