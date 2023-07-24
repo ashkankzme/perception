@@ -26,7 +26,7 @@ def train(trainingConfig, mrf, modelOutputPath, loadLocally=False, localModelPat
 
     model = MisinfoPerceptionT5(trainingConfig, len(mrf.train_dataloader()) // trainingConfig.BATCH_SIZE,
                                 loadLocally=loadLocally, localModelPath=localModelPath, modelOutputPath=modelOutputPath)
-    accumulatedBatches = trainingConfig.ACCUMULATED_BATCHES if hasattr(trainingConfig, "ACCUMULATED_BATCHES") else 1
+    accumulatedBatches = getattr(trainingConfig, "ACCUMULATED_BATCHES", 1)
     trainer = Trainer(accelerator='cuda',
                       strategy='ddp',
                       devices='auto',
