@@ -98,6 +98,7 @@ class MisinfoPerceptionT5(pl.LightningModule):
                 yPred[i] = 1 - yTrue[i]  # swaping out the label with the wrong answer, since the output format was corrupt (penalizing in evaluation)
 
         self.testResults.append({'yPred': yPred, 'yTrue': yTrue})
+        # todo persist evaluation results
 
 
     @staticmethod
