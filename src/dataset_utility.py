@@ -27,6 +27,19 @@ class MRFDatasetUtility(object):
                         data.append(row)
         return data
 
+
+    @staticmethod
+    # Read all .tsv files in input directory, pushing rows as objects into a list with TSV header as keys. Return list of objects. TSV files are encoded as ISO-8859-1.
+    def readTSVFiles(directory):
+        data = []
+        for filename in os.listdir(directory):
+            if filename.endswith('.tsv'):
+                with open(os.path.join(directory, filename), 'r', encoding='ISO-8859-1') as tsvfile:
+                    reader = csv.DictReader(tsvfile, delimiter='\t')
+                    for row in reader:
+                        data.append(row)
+        return data
+
     # Input: list of objects
     # Output: Return a dict, containing all objects in the list, grouped by "WorkerId"
     def groupByWorkerId(data):
@@ -365,7 +378,7 @@ class MRFDatasetUtility(object):
     @staticmethod
     def getActualLabelForHeadlinesFromMRFPublicDataset(headlines):
         headlineLabels = {}
-        frames = MRFDatasetUtility.readCSVFiles('../data/mrf_v1/')
+        frames = MRFDatasetUtility.readTSVFiles('../data/mrf_v1/')
         for frame in frames:
             headlineLabels[frame['headline'].strip().lower()] = frame['gold_label']
 
