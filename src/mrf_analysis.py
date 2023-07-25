@@ -1,5 +1,5 @@
 import random
-from mrf_dataset_utility import MRFDatasetUtility as mrfdu
+from dataset_utility import MRFDatasetUtility as mrfdu
 from demographic_utils import DemographicUtils
 from utils import loadObjectsFromJsonFile
 

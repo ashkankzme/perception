@@ -5,7 +5,7 @@ from pytorch_lightning import Trainer
 from pytorch_lightning.callbacks import EarlyStopping, LearningRateMonitor
 from misinfo_perception_t5 import MisinfoPerceptionT5
 from mrf_data_module import MRFDataModule
-from mrf_dataset_utility import MRFDatasetUtility as mrfdu
+from dataset_utility import MRFDatasetUtility as mrfdu
 import time, sys
 
 import trainingConfigs

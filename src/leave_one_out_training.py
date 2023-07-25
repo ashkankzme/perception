@@ -1,7 +1,7 @@
 from utils import loadObjectsFromJsonFile
 from train_perception_modeling import parseArgs, train
 from mrf_data_module import MRFDataModule
-from mrf_dataset_utility import MRFDatasetUtility as mrfdu
+from dataset_utility import MRFDatasetUtility as mrfdu
 import sys, time
 
 

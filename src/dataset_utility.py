@@ -360,3 +360,13 @@ class MRFDatasetUtility(object):
         testWorkers = [worker for worker in workers if worker['id'] in testWorkerIds]
         Trajectory.generateTrajectorySequencesFromMRFDataset(workers, {'min': 4, 'max': 8}, outputPath + 'train_trajectories.json', labelsOnly=labelsOnly)
         Trajectory.generateTrajectorySequencesFromMRFDataset(testWorkers, {'min': 4, 'max': 8}, outputPath + 'test_trajectories.json', labelsOnly=labelsOnly)
+
+
+    @staticmethod
+    def getActualLabelForHeadlinesFromMRFPublicDataset(headlines):
+        headlineLabels = {}
+        frames = MRFDatasetUtility.readCSVFiles('../data/mrf_v1/')
+        for frame in frames:
+            headlineLabels[frame['headline'].strip().lower()] = frame['gold_label']
+
+        return [headlineLabels[headline.strip().lower()] for headline in headlines]
