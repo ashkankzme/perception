@@ -122,6 +122,22 @@ leaveOneOut = SimpleNamespace(
     LABELS_ONLY=True,
     MODEL_PATH='../trainedModels/leaveOneOut',
     SAMPLING_RATE=10000,
-    DESCRIPTION="Trained only on perception labels, Small Model (flan-t5-small, 77M Parameters), training data leaves out anyone with demographics",
+    DESCRIPTION="Leave one out training/evaluation for users with demographics, on a base model trained on all other users w/out demographics",
     MASKED_DEMOGRAPHICS=False,
+)
+
+HotStartCV = SimpleNamespace(
+    BASE_MODEL_NAME='../trainedModels/leaveOneOut',
+    TRUST_REMOTE_CODE=False,
+    BATCH_SIZE=4,
+    MAX_INPUT_LENGTH=512,
+    MAX_OUTPUT_LENGTH=512,
+    DATASET_PATH='TODO',
+    LABELS_ONLY=True,
+    MODEL_PATH='../trainedModels/HotStartCV',
+    SAMPLING_RATE=10000,
+    DESCRIPTION="Hot Start, cross validation training/evaluation, built on top of leave one out models",
+    MASKED_DEMOGRAPHICS=False,
+    NUM_TRAIN_EPOCHS=5,
+    WARMUP_STEPS=0,
 )
