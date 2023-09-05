@@ -4,16 +4,16 @@ import gc, torch, time
 
 
 class MisinfoPerceptionT5(pl.LightningModule):
-    def __init__(self, config, trainSetLength, loadLocally=False, localModelPath=None, modelOutputPath=None, lr=5e-5, num_train_epochs=5, warmup_steps=100):
+    def __init__(self, config, trainSetLength, loadLocally=False, localModelPath=None, modelOutputPath=None):
         super().__init__()
 
         self.config = config
         self.trainSetLength = trainSetLength
         self.tokenizer = AutoTokenizer.from_pretrained(self.config.BASE_MODEL_NAME)
 
-        self.hparams.lr = lr
-        self.hparams.num_train_epochs = num_train_epochs
-        self.hparams.warmup_steps = warmup_steps
+        self.hparams.lr = getattr(self.config, "LEARNING_RATE", 5e-5)
+        self.hparams.num_train_epochs = getattr(self.config, "NUM_TRAIN_EPOCHS", 5)
+        self.hparams.warmup_steps = getattr(self.config, "WARMUP_STEPS", 100)
 
         trustRemoteCode = True if self.config.TRUST_REMOTE_CODE else False
 
