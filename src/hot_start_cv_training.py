@@ -27,15 +27,13 @@ if __name__ == '__main__':
     for workerId in workerIdsWDemographics:
         print("Starting training models for worker " + workerId)
         workerTrajectoriesFileName = trainingConfig.DATASET_PATH + workerId + '_trajectories.json'
-        workerTrajectoriesLength = -1 # len(loadObjectsFromJsonFile(workerTrajectoriesFileName)) TODO: fix this
+        workerTrajectoriesLength = len(loadObjectsFromJsonFile(workerTrajectoriesFileName))
         for foldId in range(trainingConfig.FOLDS):
             print(workerId + ", fold: " + str(foldId) + ": starting training...")
             foldStartIdx, foldEndIdx = getFoldIndices(workerTrajectoriesLength, trainingConfig.FOLDS, foldId)
-            mrf = PerWorkerSkipMRFDataModule(trainingConfig, workerTrajectoriesFileName, skipIndices=[_ for _ in range(foldStartIdx, foldEndIdx+1)])
+            foldDM = PerWorkerSkipMRFDataModule(trainingConfig, workerTrajectoriesFileName, skipIndices=[_ for _ in range(foldStartIdx, foldEndIdx+1)])
 
-
-
-
-            train(trainingConfig, mrf, trainingConfig.MODEL_PATH+'_loo_'+workerId+'/', loadLocally=True,
-                  localModelPath=trainingConfig.MODEL_PATH+'_base/trained_model/', lossMonitor='training_loss')
+            modelOutputPath = trainingConfig.MODEL_PATH + '_' + workerId + '_' + str(foldId) + '/'
+            localModelPath = trainingConfig.BASE_MODEL_NAME + '_' + workerId + '/'
+            train(trainingConfig, foldDM, modelOutputPath, loadLocally=True, localModelPath=localModelPath, lossMonitor='training_loss')
             print(workerId + ", fold: " + str(foldId) + ": trained")
