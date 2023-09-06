@@ -103,5 +103,5 @@ class MRFDataModule(pl.LightningDataModule):
         with torch.no_grad():
             torch.cuda.empty_cache()
 
-        print('tear down complete, sleeping for 5 seconds')
+        print('data module tear down complete, sleeping for 5 seconds')
         time.sleep(5)

@@ -135,5 +135,5 @@ class MisinfoPerceptionT5(pl.LightningModule):
         with torch.no_grad():
             torch.cuda.empty_cache()
 
-        print('tear down complete, sleeping for 5 seconds')
+        print('model tear down complete, sleeping for 5 seconds')
         time.sleep(5)
