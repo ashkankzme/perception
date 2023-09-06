@@ -1,6 +1,6 @@
-from utils import loadObjectsFromJsonFile
+from utils import loadObjectsFromJsonFile, getFoldIndices
 from train_perception_modeling import parseArgs, train
-from mrf_data_module import MRFDataModule
+from per_worker_skip_mrf_data_module import PerWorkerSkipMRFDataModule
 from dataset_utility import MRFDatasetUtility as mrfdu
 import sys, time
 
@@ -16,22 +16,26 @@ if __name__ == '__main__':
         labelsOnly = getattr(trainingConfig, "LABELS_ONLY", False)
         # generates trajectories for training, validation and testing
         mrfdu.generateTrajectoriesPerWorker(trainingConfig.DATASET_PATH, labelsOnly=labelsOnly, testWorkerIds=workerIdsWDemographics)
+        print("Trajectories generated, waiting for io to finish...")
         # wait for i/o to finish
         time.sleep(10)
 
-    # setattr(trainingConfig, 'SAVE_MODEL', True)
-    #
-    # # train a base model with all the non-demographic workers, save results
-    # print("Training base model...")
-    # mrf = MRFDataModule(trainingConfig, excludedWorkers=workerIdsWDemographics)
-    # train(trainingConfig, mrf, trainingConfig.MODEL_PATH+'_base/trained_model/', lossMonitor='training_loss')
-    # print("Base model trained.")
-    #
-    # # leave one out training
-    # for workerId in workerIdsWDemographics:
-    #     # load model locally, exclude non-demographic workers + current worker from training
-    #     print("Training model with worker " + workerId + " excluded...")
-    #     mrf = MRFDataModule(trainingConfig, excludedWorkers=[workerId]+workerIdsWithoutDemographics)
-    #     train(trainingConfig, mrf, trainingConfig.MODEL_PATH+'_loo_'+workerId+'/', loadLocally=True,
-    #           localModelPath=trainingConfig.MODEL_PATH+'_base/trained_model/', lossMonitor='training_loss')
-    #     print("Model trained with worker " + workerId + " excluded.")
+
+    setattr(trainingConfig, 'SAVE_MODEL', True)
+
+    # for each worker, train N different models for cross validation
+    for workerId in workerIdsWDemographics:
+        print("Starting training models for worker " + workerId)
+        workerTrajectoriesFileName = trainingConfig.DATASET_PATH + workerId + '_trajectories.json'
+        workerTrajectoriesLength = -1 # len(loadObjectsFromJsonFile(workerTrajectoriesFileName)) TODO: fix this
+        for foldId in range(trainingConfig.FOLDS):
+            print(workerId + ", fold: " + str(foldId) + ": starting training...")
+            foldStartIdx, foldEndIdx = getFoldIndices(workerTrajectoriesLength, trainingConfig.FOLDS, foldId)
+            mrf = PerWorkerSkipMRFDataModule(trainingConfig, workerTrajectoriesFileName, skipIndices=[_ for _ in range(foldStartIdx, foldEndIdx+1)])
+
+
+
+
+            train(trainingConfig, mrf, trainingConfig.MODEL_PATH+'_loo_'+workerId+'/', loadLocally=True,
+                  localModelPath=trainingConfig.MODEL_PATH+'_base/trained_model/', lossMonitor='training_loss')
+            print(workerId + ", fold: " + str(foldId) + ": trained")
