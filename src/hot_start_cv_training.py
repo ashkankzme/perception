@@ -28,7 +28,7 @@ if __name__ == '__main__':
 
         print("Starting training models for worker " + workerId)
         workerTrajectoriesFileName = workerId + '_trajectories.json'
-        workerTrajectoriesLength = len(loadObjectsFromJsonFile(workerTrajectoriesFileName))
+        workerTrajectoriesLength = len(loadObjectsFromJsonFile(trainingConfig.DATASET_PATH + workerTrajectoriesFileName))
         localModelPath = trainingConfig.BASE_MODEL_NAME + '_' + workerId + '/'
 
         for foldId in range(trainingConfig.FOLDS):
