@@ -11,7 +11,9 @@ class MRFDataset(Dataset):
         super().__init__()
         self.config = config
         self.datasetPath = datasetPath
-        self.tokenizer = AutoTokenizer.from_pretrained(config.BASE_MODEL_NAME)
+        trustRemoteCode = getattr(config, 'TRUST_REMOTE_CODE', False)
+        tokenizerName = getattr(config, 'TOKENIZER_NAME', config.BASE_MODEL_NAME)
+        self.tokenizer = AutoTokenizer.from_pretrained(tokenizerName, trust_remote_code=trustRemoteCode)
         self.jsonData = loadObjectsFromJsonFile(self.datasetPath)
         # downsampling the dataset, in case too big for evaluation. commenting the following line will remove the downsampling
         # self.jsonData = random.sample(self.jsonData, int(round(len(self.jsonData) * 0.04)))
