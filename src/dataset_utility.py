@@ -374,6 +374,17 @@ class MRFDatasetUtility(object):
         Trajectory.generateTrajectorySequencesFromMRFDataset(workers, {'min': 4, 'max': 8}, outputPath + 'train_trajectories.json', labelsOnly=labelsOnly)
         Trajectory.generateTrajectorySequencesFromMRFDataset(testWorkers, {'min': 4, 'max': 8}, outputPath + 'test_trajectories.json', labelsOnly=labelsOnly)
 
+    @staticmethod
+    def generateTrajectoriesPerWorker(outputPath, labelsOnly, testWorkerIds):
+        workers = loadObjectsFromJsonFile('../data/mrf_turk_processed.json')
+        # throwing out workers with less than 100 annotated frames
+        workers = [worker for worker in workers if len(worker['annotatedFrames']) >= 100]
+
+        for workerId in testWorkerIds:
+            testWorkers = [worker for worker in workers if worker['id'] == workerId]
+            Trajectory.generateTrajectorySequencesFromMRFDataset(testWorkers, {'min': 4, 'max': 8},
+                                                                 outputPath + workerId + '_trajectories.json',
+                                                                 labelsOnly=labelsOnly)
 
     @staticmethod
     def getActualLabelForHeadlinesFromMRFPublicDataset(headlines):

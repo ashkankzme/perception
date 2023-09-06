@@ -17,3 +17,11 @@ def loadObjectsFromJsonFile(fileName): # todo does this work?
         # data = json.load(json_file, object_hook=HumanWorker._decode)
 
     return data
+
+
+def getFoldIndices(datasetSize, foldCount, foldIdx):
+    foldSize = datasetSize // foldCount
+    foldStartIdx = foldSize * foldIdx
+    foldEndIdx = min(foldStartIdx + foldSize, datasetSize-1)
+
+    return foldStartIdx, foldEndIdx

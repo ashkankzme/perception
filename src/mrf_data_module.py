@@ -7,8 +7,10 @@ import time
 
 
 class MRFDataModule(pl.LightningDataModule):
-    def __init__(self, datasetConfig, excludedWorkers=None):
+    def __init__(self, datasetConfig, excludedWorkers=None, skipIndices=None):
         super().__init__()
+        if skipIndices is None:
+            skipIndices = []
         if excludedWorkers is None:
             excludedWorkers = []
         self.config = datasetConfig
@@ -16,10 +18,11 @@ class MRFDataModule(pl.LightningDataModule):
         self.datasetPath = datasetConfig.DATASET_PATH
         self.maxInputLength = datasetConfig.MAX_INPUT_LENGTH
         self.maxOutputLength = datasetConfig.MAX_OUTPUT_LENGTH
-        trustRemoteCode = True if datasetConfig.TRUST_REMOTE_CODE else False
+        trustRemoteCode = getattr(datasetConfig, 'TRUST_REMOTE_CODE', False)
         self.tokenizer = AutoTokenizer.from_pretrained(datasetConfig.BASE_MODEL_NAME, trust_remote_code=trustRemoteCode)
         self.maskedDemographics = getattr(datasetConfig, 'MASKED_DEMOGRAPHICS', False)
         self.excludedWorkers = excludedWorkers
+        self.skipIndices = skipIndices
 
         self.trainDataLoader = None
         self.valDataLoader = None
@@ -83,7 +86,8 @@ class MRFDataModule(pl.LightningDataModule):
     def _wrapInDatasetObj(self, fileName):
         transformedData = MaskedMRFDataset(self.datasetPath + fileName, self.config,
                                            removeDemographics=self.maskedDemographics,
-                                           excludedWorkers=self.excludedWorkers)
+                                           excludedWorkers=self.excludedWorkers,
+                                           skipIndices=self.skipIndices)
         return DataLoader(transformedData, batch_size=self.batchSize, shuffle=False, num_workers=1, pin_memory=True)
 
 
