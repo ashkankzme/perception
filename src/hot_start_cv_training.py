@@ -25,15 +25,19 @@ if __name__ == '__main__':
 
     # for each worker, train N different models for cross validation
     for workerId in workerIdsWDemographics:
+
         print("Starting training models for worker " + workerId)
         workerTrajectoriesFileName = trainingConfig.DATASET_PATH + workerId + '_trajectories.json'
         workerTrajectoriesLength = len(loadObjectsFromJsonFile(workerTrajectoriesFileName))
+        localModelPath = trainingConfig.BASE_MODEL_NAME + '_' + workerId + '/'
+
         for foldId in range(trainingConfig.FOLDS):
             print(workerId + ", fold: " + str(foldId) + ": starting training...")
             foldStartIdx, foldEndIdx = getFoldIndices(workerTrajectoriesLength, trainingConfig.FOLDS, foldId)
+
             foldDM = PerWorkerSkipMRFDataModule(trainingConfig, workerTrajectoriesFileName, skipIndices=[_ for _ in range(foldStartIdx, foldEndIdx+1)])
 
             modelOutputPath = trainingConfig.MODEL_PATH + '_' + workerId + '_' + str(foldId) + '/'
-            localModelPath = trainingConfig.BASE_MODEL_NAME + '_' + workerId + '/'
+
             train(trainingConfig, foldDM, modelOutputPath, loadLocally=True, localModelPath=localModelPath, lossMonitor='training_loss')
             print(workerId + ", fold: " + str(foldId) + ": trained")
