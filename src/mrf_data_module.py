@@ -19,7 +19,8 @@ class MRFDataModule(pl.LightningDataModule):
         self.maxInputLength = datasetConfig.MAX_INPUT_LENGTH
         self.maxOutputLength = datasetConfig.MAX_OUTPUT_LENGTH
         trustRemoteCode = getattr(datasetConfig, 'TRUST_REMOTE_CODE', False)
-        self.tokenizer = AutoTokenizer.from_pretrained(datasetConfig.BASE_MODEL_NAME, trust_remote_code=trustRemoteCode)
+        tokenizerName = getattr(datasetConfig, 'TOKENIZER_NAME', datasetConfig.BASE_MODEL_NAME)
+        self.tokenizer = AutoTokenizer.from_pretrained(tokenizerName, trust_remote_code=trustRemoteCode)
         self.maskedDemographics = getattr(datasetConfig, 'MASKED_DEMOGRAPHICS', False)
         self.excludedWorkers = excludedWorkers
         self.skipIndices = skipIndices

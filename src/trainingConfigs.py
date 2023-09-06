@@ -128,6 +128,7 @@ leaveOneOut = SimpleNamespace(
 
 HotStartCV = SimpleNamespace(
     BASE_MODEL_NAME='../trainedModels/leaveOneOut_loo_',
+    TOKENIZER_NAME="google/flan-t5-small",
     TRUST_REMOTE_CODE=False,
     BATCH_SIZE=4,
     MAX_INPUT_LENGTH=512,
