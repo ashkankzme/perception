@@ -9,7 +9,9 @@ class MisinfoPerceptionT5(pl.LightningModule):
 
         self.config = config
         self.trainSetLength = trainSetLength
-        self.tokenizer = AutoTokenizer.from_pretrained(self.config.BASE_MODEL_NAME)
+        trustRemoteCode = getattr(self.config, 'TRUST_REMOTE_CODE', False)
+        tokenizerName = getattr(self.config, 'TOKENIZER_NAME', self.config.BASE_MODEL_NAME)
+        self.tokenizer = AutoTokenizer.from_pretrained(tokenizerName, trust_remote_code=trustRemoteCode)
 
         self.hparams.lr = getattr(self.config, "LEARNING_RATE", 5e-5)
         self.hparams.num_train_epochs = getattr(self.config, "NUM_TRAIN_EPOCHS", 5)
