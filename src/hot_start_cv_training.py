@@ -27,7 +27,7 @@ if __name__ == '__main__':
     for workerId in workerIdsWDemographics:
 
         print("Starting training models for worker " + workerId)
-        workerTrajectoriesFileName = trainingConfig.DATASET_PATH + workerId + '_trajectories.json'
+        workerTrajectoriesFileName = workerId + '_trajectories.json'
         workerTrajectoriesLength = len(loadObjectsFromJsonFile(workerTrajectoriesFileName))
         localModelPath = trainingConfig.BASE_MODEL_NAME + '_' + workerId + '/'
 
