@@ -10,7 +10,6 @@ if __name__ == '__main__':
 
     print("Loading worker ids...")
     workerIdsWDemographics = loadObjectsFromJsonFile('../data/worker_ids_with_demographics.json')
-    workerIdsWithoutDemographics = loadObjectsFromJsonFile('../data/worker_ids_without_demographics.json')
 
     if dataGeneration:
         labelsOnly = getattr(trainingConfig, "LABELS_ONLY", False)
