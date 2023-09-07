@@ -141,5 +141,5 @@ HotStartCV = SimpleNamespace(
     MASKED_DEMOGRAPHICS=False,
     NUM_TRAIN_EPOCHS=5,
     WARMUP_STEPS=0,
-    FOLDS=10,
+    FOLDS=5,
 )
