@@ -139,7 +139,7 @@ HotStartCV = SimpleNamespace(
     SAMPLING_RATE=10000,
     DESCRIPTION="Hot Start, cross validation training/evaluation, built on top of leave one out models",
     MASKED_DEMOGRAPHICS=False,
-    NUM_TRAIN_EPOCHS=5,
+    NUM_TRAIN_EPOCHS=1,
     # WARMUP_STEPS=0,
     FOLDS=10,
 )

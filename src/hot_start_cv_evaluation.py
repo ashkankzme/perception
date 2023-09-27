@@ -24,7 +24,7 @@ if __name__ == '__main__':
     # for each worker, evaluate every fold w and w/out demographics.
     # Record avg and std of the results for each worker
     results = []
-    for workerId in workerIdsWDemographics:
+    for workerId in workerIdsWDemographics[:1]:
 
         print("Evaluating worker: " + workerId)
         workerTrajectoriesFileName = workerId + '_trajectories.json'
