@@ -39,7 +39,7 @@ if __name__ == '__main__':
             skipIndices = [_ for _ in range(workerTrajectoriesLength) if _ < foldStartIdx or _ > foldEndIdx]
 
             foldDM = PerWorkerSkipMRFDataModule(evalConfig, workerTrajectoriesFileName, skipIndices=skipIndices)
-            workerFoldModelPath = evalConfig.BASE_MODEL_NAME + '_' + workerId + '/'
+            workerFoldModelPath = evalConfig.BASE_MODEL_NAME + workerId + '/'
             # workerFoldModelPath = evalConfig.MODEL_PATH + '_' + workerId + '_' + str(foldId) + '/'
             acc, f1_misinfo, f1_real = evaluate(evalConfig, foldDM, workerFoldModelPath)
             workerResults.append([acc, f1_misinfo, f1_real])
