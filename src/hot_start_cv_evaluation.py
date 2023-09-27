@@ -24,7 +24,7 @@ if __name__ == '__main__':
     # for each worker, evaluate every fold w and w/out demographics.
     # Record avg and std of the results for each worker
     results = []
-    for workerId in workerIdsWDemographics[:1]:
+    for workerId in workerIdsWDemographics:
 
         print("Evaluating worker: " + workerId)
         workerTrajectoriesFileName = workerId + '_trajectories.json'
@@ -39,8 +39,8 @@ if __name__ == '__main__':
             skipIndices = [_ for _ in range(workerTrajectoriesLength) if _ < foldStartIdx or _ >= foldEndIdx]
 
             foldDM = PerWorkerSkipMRFDataModule(evalConfig, workerTrajectoriesFileName, skipIndices=skipIndices)
-            workerFoldModelPath = evalConfig.BASE_MODEL_NAME + workerId + '/'
-            # workerFoldModelPath = evalConfig.MODEL_PATH + '_' + workerId + '_' + str(foldId) + '/'
+            # workerFoldModelPath = evalConfig.BASE_MODEL_NAME + workerId + '/' # uncomment for zero-shot evaluation
+            workerFoldModelPath = evalConfig.MODEL_PATH + '_' + workerId + '_' + str(foldId) + '/'
             acc, f1_misinfo, f1_real = evaluate(evalConfig, foldDM, workerFoldModelPath)
             workerResults.append([acc, f1_misinfo, f1_real])
             print(workerId + ", fold: " + str(foldId) + ": w demographic evaluation results: ", acc, f1_misinfo, f1_real)

@@ -382,7 +382,9 @@ class MRFDatasetUtility(object):
 
         for workerId in testWorkerIds:
             testWorkers = [worker for worker in workers if worker['id'] == workerId]
-            Trajectory.generateTrajectorySequencesFromMRFDataset(testWorkers, {'min': 4, 'max': 8},
+            # setting number of trajectories to 4 for each worker. This allows for more data points,
+            # which helps lower the variance of our cross validation results
+            Trajectory.generateTrajectorySequencesFromMRFDataset(testWorkers, {'min': 4, 'max': 4},
                                                                  outputPath + workerId + '_trajectories.json',
                                                                  labelsOnly=labelsOnly)
 

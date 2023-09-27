@@ -23,7 +23,7 @@ if __name__ == '__main__':
     setattr(trainingConfig, 'SAVE_MODEL', True)
 
     # for each worker, train N different models for cross validation
-    for workerId in workerIdsWDemographics[:1]:
+    for workerId in workerIdsWDemographics:
 
         print("Starting training models for worker " + workerId)
         workerTrajectoriesFileName = workerId + '_trajectories.json'
