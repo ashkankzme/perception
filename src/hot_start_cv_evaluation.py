@@ -36,7 +36,7 @@ if __name__ == '__main__':
             setattr(evalConfig, "MASKED_DEMOGRAPHICS", False)
 
             foldStartIdx, foldEndIdx = getFoldIndices(workerTrajectoriesLength, evalConfig.FOLDS, foldId)
-            skipIndices = [_ for _ in range(workerTrajectoriesLength) if _ < foldStartIdx or _ > foldEndIdx]
+            skipIndices = [_ for _ in range(workerTrajectoriesLength) if _ < foldStartIdx or _ >= foldEndIdx]
 
             foldDM = PerWorkerSkipMRFDataModule(evalConfig, workerTrajectoriesFileName, skipIndices=skipIndices)
             workerFoldModelPath = evalConfig.BASE_MODEL_NAME + workerId + '/'

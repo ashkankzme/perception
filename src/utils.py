@@ -22,6 +22,6 @@ def loadObjectsFromJsonFile(fileName): # todo does this work?
 def getFoldIndices(datasetSize, foldCount, foldIdx):
     foldSize = datasetSize // foldCount
     foldStartIdx = foldSize * foldIdx
-    foldEndIdx = min(foldStartIdx + foldSize, datasetSize-1)
+    foldEndIdx = min(foldStartIdx + foldSize, datasetSize-1) if foldIdx != foldCount-1 else datasetSize-1
 
     return foldStartIdx, foldEndIdx

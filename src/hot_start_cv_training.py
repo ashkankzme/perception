@@ -34,7 +34,7 @@ if __name__ == '__main__':
             print(workerId + ", fold: " + str(foldId) + ": starting training...")
             foldStartIdx, foldEndIdx = getFoldIndices(workerTrajectoriesLength, trainingConfig.FOLDS, foldId)
 
-            foldDM = PerWorkerSkipMRFDataModule(trainingConfig, workerTrajectoriesFileName, skipIndices=[_ for _ in range(foldStartIdx, foldEndIdx+1)])
+            foldDM = PerWorkerSkipMRFDataModule(trainingConfig, workerTrajectoriesFileName, skipIndices=[_ for _ in range(foldStartIdx, foldEndIdx)])
 
             modelOutputPath = trainingConfig.MODEL_PATH + '_' + workerId + '_' + str(foldId) + '/'
 
