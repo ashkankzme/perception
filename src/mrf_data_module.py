@@ -84,11 +84,13 @@ class MRFDataModule(pl.LightningDataModule):
         return self.testDataLoader
 
 
-    def _wrapInDatasetObj(self, fileName):
+    def _wrapInDatasetObj(self, fileName, additionalSkipIndices=None):
+        if additionalSkipIndices is None:
+            additionalSkipIndices = []
         transformedData = MaskedMRFDataset(self.datasetPath + fileName, self.config,
                                            removeDemographics=self.maskedDemographics,
                                            excludedWorkers=self.excludedWorkers,
-                                           skipIndices=self.skipIndices)
+                                           skipIndices=self.skipIndices+additionalSkipIndices)
         return DataLoader(transformedData, batch_size=self.batchSize, shuffle=False, num_workers=1, pin_memory=True)
 
 

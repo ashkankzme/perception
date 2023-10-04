@@ -32,11 +32,15 @@ if __name__ == '__main__':
 
         for foldId in range(trainingConfig.FOLDS):
             print(workerId + ", fold: " + str(foldId) + ": starting training...")
-            foldStartIdx, foldEndIdx = getFoldIndices(workerTrajectoriesLength, trainingConfig.FOLDS, foldId)
+            testFoldStartIdx, testFoldEndIdx = getFoldIndices(workerTrajectoriesLength, trainingConfig.FOLDS, foldId)
+            validationFoldId = foldId - 1 if foldId > 0 else trainingConfig.FOLDS - 1
+            validationFoldStartIdx, validationFoldEndIdx = getFoldIndices(workerTrajectoriesLength, trainingConfig.FOLDS, validationFoldId)
 
-            foldDM = PerWorkerSkipMRFDataModule(trainingConfig, workerTrajectoriesFileName, skipIndices=[_ for _ in range(foldStartIdx, foldEndIdx)])
+            foldDM = PerWorkerSkipMRFDataModule(trainingConfig, workerTrajectoriesFileName, workerTrajectoriesLength,
+                                                skipIndices=[_ for _ in range(testFoldStartIdx, testFoldEndIdx)],
+                                                validationIndices=[_ for _ in range(validationFoldStartIdx, validationFoldEndIdx)])
 
             modelOutputPath = trainingConfig.MODEL_PATH + '_' + workerId + '_' + str(foldId) + '/'
 
-            train(trainingConfig, foldDM, modelOutputPath, loadLocally=True, localModelPath=localModelPath, lossMonitor='training_loss')
+            train(trainingConfig, foldDM, modelOutputPath, loadLocally=True, localModelPath=localModelPath, lossMonitor='validation_loss')
             print(workerId + ", fold: " + str(foldId) + ": trained")
