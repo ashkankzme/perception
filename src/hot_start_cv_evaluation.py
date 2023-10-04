@@ -39,8 +39,8 @@ if __name__ == '__main__':
             skipIndices = [_ for _ in range(workerTrajectoriesLength) if _ < foldStartIdx or _ >= foldEndIdx]
 
             foldDM = PerWorkerSkipMRFDataModule(evalConfig, workerTrajectoriesFileName, skipIndices=skipIndices)
-            # workerFoldModelPath = evalConfig.BASE_MODEL_NAME + workerId + '/' # uncomment for zero-shot evaluation
-            workerFoldModelPath = evalConfig.MODEL_PATH + '_' + workerId + '_' + str(foldId) + '/'
+            workerFoldModelPath = evalConfig.BASE_MODEL_NAME + workerId + '/' # uncomment for zero-shot evaluation
+            # workerFoldModelPath = evalConfig.MODEL_PATH + '_' + workerId + '_' + str(foldId) + '/'
             acc, f1_misinfo, f1_real = evaluate(evalConfig, foldDM, workerFoldModelPath)
             workerResults.append([acc, f1_misinfo, f1_real])
             print(workerId + ", fold: " + str(foldId) + ": w demographic evaluation results: ", acc, f1_misinfo, f1_real)
@@ -70,4 +70,4 @@ if __name__ == '__main__':
         workerResults.append([cvAcc, cvF1_misinfo, cvF1_real, cvAcc2, cvF1_misinfo2, cvF1_real2])
         results.append(workerResults)
 
-    saveToJsonFile(results, evalConfig.DATASET_PATH + 'test_results.json')
+    saveToJsonFile(results, evalConfig.DATASET_PATH + 'test_results_10fold_zero_shot.json')
