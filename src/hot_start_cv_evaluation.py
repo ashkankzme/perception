@@ -35,10 +35,10 @@ if __name__ == '__main__':
             print(workerId + ", fold: " + str(foldId) + ": starting evaluation w demographics...")
             setattr(evalConfig, "MASKED_DEMOGRAPHICS", False)
 
-            foldStartIdx, foldEndIdx = getFoldIndices(workerTrajectoriesLength, evalConfig.FOLDS, foldId)
-            skipIndices = [_ for _ in range(workerTrajectoriesLength) if _ < foldStartIdx or _ >= foldEndIdx]
+            testFoldStartIdx, testFoldEndIdx = getFoldIndices(workerTrajectoriesLength, evalConfig.FOLDS, foldId)
+            skipIndices = [_ for _ in range(workerTrajectoriesLength) if _ < testFoldStartIdx or _ >= testFoldEndIdx]
 
-            foldDM = PerWorkerSkipMRFDataModule(evalConfig, workerTrajectoriesFileName, skipIndices=skipIndices)
+            foldDM = PerWorkerSkipMRFDataModule(evalConfig, workerTrajectoriesFileName, workerTrajectoriesLength, skipIndices=skipIndices)
             # workerFoldModelPath = evalConfig.BASE_MODEL_NAME + workerId + '/' # uncomment for zero-shot evaluation
             workerFoldModelPath = evalConfig.MODEL_PATH + '_' + workerId + '_' + str(foldId) + '/'
             acc, f1_misinfo, f1_real = evaluate(evalConfig, foldDM, workerFoldModelPath)
@@ -49,7 +49,7 @@ if __name__ == '__main__':
             print(workerId + ", fold: " + str(foldId) + ": starting evaluation without demographics...")
             setattr(evalConfig, "MASKED_DEMOGRAPHICS", True)
 
-            foldDM = PerWorkerSkipMRFDataModule(evalConfig, workerTrajectoriesFileName, skipIndices=skipIndices)
+            foldDM = PerWorkerSkipMRFDataModule(evalConfig, workerTrajectoriesFileName, workerTrajectoriesLength, skipIndices=skipIndices)
             acc, f1_misinfo, f1_real = evaluate(evalConfig, foldDM, workerFoldModelPath)
             workerResults[foldId] += [acc, f1_misinfo, f1_real]
             print(workerId + ", fold: " + str(foldId) + ": without demographic evaluation results: ", acc, f1_misinfo, f1_real)
