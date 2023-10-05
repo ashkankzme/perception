@@ -70,4 +70,4 @@ if __name__ == '__main__':
         workerResults.append([cvAcc, cvF1_misinfo, cvF1_real, cvAcc2, cvF1_misinfo2, cvF1_real2])
         results.append(workerResults)
 
-    saveToJsonFile(results, evalConfig.DATASET_PATH + 'test_results_10fold_w_validation.json')
+    saveToJsonFile(results, evalConfig.DATASET_PATH + 'test_results_10fold_masked_w_validation.json')
