@@ -143,3 +143,18 @@ HotStartCV = SimpleNamespace(
     WARMUP_STEPS=5,
     FOLDS=10,
 )
+
+leaveOneOutSingle = SimpleNamespace(
+    BASE_MODEL_NAME="google/flan-t5-small",
+    TOKENIZER_NAME="google/flan-t5-small",
+    TRUST_REMOTE_CODE=False,
+    BATCH_SIZE=4,
+    MAX_INPUT_LENGTH=512,
+    MAX_OUTPUT_LENGTH=512,
+    DATASET_PATH='../data/trajectories/leaveoneoutsingle/',
+    LABELS_ONLY=False,
+    MODEL_PATH='../trainedModels/leaveOneOutSingle',
+    SAMPLING_RATE=10000,
+    DESCRIPTION="Leave one out training/evaluation with single queries (no context)",
+    MASKED_DEMOGRAPHICS=False,
+)

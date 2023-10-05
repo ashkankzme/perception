@@ -45,4 +45,4 @@ if __name__ == '__main__':
         setattr(evalConfig, "MASKED_DEMOGRAPHICS", False)
         print('-' * 25)
 
-    saveToJsonFile(results, evalConfig.DATASET_PATH + 'test_results.json')
+    saveToJsonFile(results, evalConfig.DATASET_PATH + 'test_results_loo.json')

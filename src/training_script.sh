@@ -1,2 +1,2 @@
-CUDA_VISIBLE_DEVICES=2,3 python hot_start_cv_training.py HotStartCV load &&
-CUDA_VISIBLE_DEVICES=3 python hot_start_cv_evaluation.py HotStartCV
+CUDA_VISIBLE_DEVICES=2,3 python leave_one_out_training.py leaveOneOutSingle gen &&
+CUDA_VISIBLE_DEVICES=3 python leave_one_out_evaluation.py leaveOneOutSingle

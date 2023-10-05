@@ -205,6 +205,34 @@ class Trajectory(object):
         trajectorySequences = Trajectory.formatInput(trajectorySequences)
         saveToJsonFile(trajectorySequences, outputFilename)
 
+    @staticmethod
+    def generateQueriesFromMRFDataset(workers, outputFilename, labelsOnly=False):
+        random.seed(1372)
+        trajectorySequences = []
+        for worker in workers:
+            workerHeader = 'Worker ID: ' + worker['id'] + '\n' + \
+                           'Age: ' + Trajectory.getAgeGroup(str(worker['age'])) + '\n' + \
+                           'Gender: ' + Trajectory.getGender(str(worker['gender'])) + '\n' + \
+                           'Education: ' + Trajectory.getEducationLevel(str(worker['education'])) + '\n' + \
+                           "Race: " + ", ".join(worker['race'] if len(worker['race']) else ['unknown']) + '\n' + \
+                           "Media Diet: " + ", ".join(
+                worker['mediaConsumptionRegimen'] if len(worker['mediaConsumptionRegimen']) else ['unknown']) + '\n'
+
+            for frame in worker['annotatedFrames']:
+                query = 'Headline: ' + frame['Input.sentence'] + '\n' + \
+                        'Perceived Label: ?\n' + \
+                        ('' if labelsOnly else 'Reader\'s Reactions: ?\n') + \
+                        ('' if labelsOnly else 'Writer\'s Intent: ?\n')
+
+                prediction = 'Perceived Label: ' + frame["perceivedLabel"] + '\n' + \
+                             ('' if labelsOnly else 'Reader\'s Reactions: ' + ", ".join(frame["reaction"]) + '\n') + \
+                             ('' if labelsOnly else 'Writer\'s Intent: ' + ", ".join(frame["intent"]) + '\n')
+
+                trajectory = Trajectory([], workerHeader, query, prediction)
+                trajectorySequences.append(trajectory)
+
+        trajectorySequences = Trajectory.formatInput(trajectorySequences)
+        saveToJsonFile(trajectorySequences, outputFilename)
 
 # if __name__ == '__main__':
 #     outputPath = '../data/trajectories/bigrui/'
