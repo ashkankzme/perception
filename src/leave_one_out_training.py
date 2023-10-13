@@ -15,8 +15,8 @@ if __name__ == '__main__':
     if dataGeneration:
         labelsOnly = getattr(trainingConfig, "LABELS_ONLY", False)
         # generates trajectories for training, validation and testing
-        # mrfdu.generateLeaveOneOutTrajectories(trainingConfig.DATASET_PATH, labelsOnly=labelsOnly, testWorkerIds=workerIdsWDemographics) # uncomment for trajectory data generation
-        mrfdu.generateLeaveOneOutQueries(trainingConfig.DATASET_PATH, labelsOnly=labelsOnly, testWorkerIds=workerIdsWDemographics) # uncomment for single frame data generation
+        mrfdu.generateLeaveOneOutTrajectories(trainingConfig.DATASET_PATH, labelsOnly=labelsOnly, testWorkerIds=workerIdsWDemographics) # uncomment for trajectory data generation
+        # mrfdu.generateLeaveOneOutQueries(trainingConfig.DATASET_PATH, labelsOnly=labelsOnly, testWorkerIds=workerIdsWDemographics) # uncomment for single frame data generation
         # wait for i/o to finish
         time.sleep(10)
 
